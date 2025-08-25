@@ -1,56 +1,62 @@
 'use client'
-import styled, { css } from "styled-components"
-import color from "../styles/color"
-import fontsize from "../styles/fontsize"
-const { dark, light } = color
+import React from 'react'
+import styled, { css } from 'styled-components'
+import color from '../styles/color'
+import fontsize from '../styles/fontsize'
+const { dark, light, white, black } = color
 const { medium } = fontsize
 
 const commonStyle = css`
-    color: ${dark};
-    border: 1px solid ${light};
-    font-size: ${medium};
-    padding: 10px;
-    border-radius: 3px;
-    width: 100%;
-    &:hover,
-    &:focus {
-        border-color: ${dark};
-    }
-        
-    & + & {
-        margin-top: 10px;
-    }
+  color: ${dark};
+  border: 1px solid ${light};
+  font-size: ${medium};
+  padding: 10px;
+  border-radius: 3px;
+  width: 100%;
+  &:hover,
+  &:focus {
+    border-color: ${dark};
+  }
+
+  & + & {
+    margin-top: 10px;
+  }
 `
+
 type CommonType = {
-    children?: React.ReactNode,
-    width?: number
-    height?: number
-} 
+  children?: React.ReactNode
+  width?: number
+  height?: number
+}
 
 export const Input = styled.input<CommonType>`
-    ${commonStyle}
-    height: 50px;
-        ${({width}) => width && css`
-            width: ${width}px;
-        `}
-        ${({height}) => height &&
-        css`
-            height: ${height}px;
-        `}
+  ${commonStyle}
+  height: 50px;
+  ${({ width }) =>
+    width &&
+    css`
+      width: ${width}px;
+    `}
+  ${({ height }) =>
+    height &&
+    css`
+      height: ${height}px;
+    `}
 `
 
 export const Textarea = styled.textarea<CommonType>`
   ${commonStyle}
   height: 150px;
+  resize: none;
   ${({ width }) =>
     width &&
     css`
-        width: ${width}px;
+      width: ${width}px;
     `}
   ${({ height }) =>
     height &&
     css`
-        height: ${height}px;
+      height: ${height}px;
     `}
 `
 
@@ -78,6 +84,45 @@ export const TableCols = styled.table<TableType>`
     th,
     td {
       border-top: 1px solid #ccc;
+    }
+  }
+
+  td {
+    svg {
+      font-size: 2rem;
+      vertical-align: middle;
+    }
+    span.radio,
+    span.checkbox {
+      margin-right: 15px;
+      cursor: pointer;
+    }
+  }
+
+  & + & {
+    margin-top: 30px;
+  }
+`
+
+export const TableRows = styled.table`
+  ${tableCommonStyle}
+  thead {
+    th {
+      background: ${black};
+      color: ${white};
+      font-size: ${medium};
+      height: 45px;
+      padding: 0 10px;
+    }
+    th + th {
+      border-left: 1px solid ${light};
+    }
+  }
+
+  tbody {
+    td {
+      border-bottom: 1px solid #ccc;
+      padding: 10px;
     }
   }
 `

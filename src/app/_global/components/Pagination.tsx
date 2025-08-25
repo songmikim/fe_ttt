@@ -1,78 +1,125 @@
 'use client'
-
 import React from 'react'
 import styled from 'styled-components'
-import color from '@/app/_global/styles/color'
+import classNames from 'classnames'
+import {
+  MdFirstPage,
+  MdLastPage,
+  MdArrowBackIos,
+  MdArrowForwardIos,
+} from 'react-icons/md'
+import color from '../styles/color'
+import fontsize from '../styles/fontsize'
 
-interface Props {
-  page: number
-  totalPages: number
-  onPageChange: (p: number) => void
-}
+const { medium } = fontsize
+const { black, white } = color
 
-const Wrapper = styled.nav`
-  margin-top: 20px;
-  text-align: center;
+const Wrapper = styled.div`
+  margin: 20px auto;
+  display: flex;
+  justify-content: center;
+  height: 45px;
+  .page {
+    border: 1px solid ${black};
+    font-size: ${medium};
+    text-align: center;
+    line-height: 43px;
+    border-radius: 3px;
+    min-width: 45px;
+    padding: 0 5px;
 
-  button {
-    margin-right: 5px;
-    padding: 6px 12px;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    background: #f8f9fa;
-    cursor: pointer;
-    transition: all 0.2s ease;
-
-    &:hover:not(:disabled) {
-      background: ${color.primary};
-      color: ${color.white};
-      border-color: ${color.primary};
-    }
-
-    &:disabled {
-      background: #e9ecef;
-      color: #adb5bd;
-      cursor: not-allowed;
+    &.on {
+      background: ${black};
+      color: ${white};
     }
   }
 
-  .active {
-    background: ${color.primary};
-    color: ${color.white};
-    font-weight: bold;
-    border-color: ${color.primary};
+  .page + .page {
+    margin-left: 3px;
   }
 `
 
-const Pagination = ({ page, totalPages, onPageChange }: Props) => {
-  if (totalPages <= 1) return null
+type PropType = {
+  pagination?: any
+  onClick?: (page: number) => void
+}
+
+const PageItem = ({
+  pages,
+  page,
+  onClick,
+  icon,
+}: {
+  pages: Array<string>
+  page: number
+  onClick?: (page: number) => void
+  icon?: React.ReactNode
+}) => {
+  return onClick ? (
+    <span
+      onClick={() => onClick(Number(pages[0]))}
+      className={classNames('page', { on: page === Number(pages[0]) })}
+    >
+      {icon ? icon : pages[0]}
+    </span>
+  ) : (
+    <a
+      href={pages[1]}
+      className={classNames('page', { on: page === Number(pages[0]) })}
+    >
+      {icon ? icon : pages[0]}
+    </a>
+  )
+}
+
+const Pagination = ({ pagination, onClick }: PropType) => {
+  if (!pagination || pagination.pages.length === 0) return <></>
+
+  const { pages, page, prevRangePage, nextRangePage, lastPage, baseUrl } =
+    pagination
+
   return (
     <Wrapper>
-      <button
-        onClick={() => onPageChange(Math.max(page - 1, 1))}
-        disabled={page === 1}
-      >
-        Prev
-      </button>
-      {Array.from({ length: totalPages }).map((_, idx) => {
-        const p = idx + 1
-        return (
-          <button
-            key={p}
-            onClick={() => onPageChange(p)}
-            disabled={p === page}
-            className={p === page ? 'active' : undefined}
-          >
-            {p}
-          </button>
-        )
-      })}
-      <button
-        onClick={() => onPageChange(Math.min(page + 1, totalPages))}
-        disabled={page === totalPages}
-      >
-        Next
-      </button>
+      {prevRangePage > 0 && (
+        <>
+          <PageItem
+            pages={['1', `${baseUrl}1`]}
+            page={page}
+            onClick={onClick}
+            icon={<MdFirstPage />}
+          />
+          <PageItem
+            pages={[prevRangePage, `${baseUrl}${prevRangePage}`]}
+            page={page}
+            onClick={onClick}
+            icon={<MdArrowBackIos />}
+          />
+        </>
+      )}
+      {pages.map((p) => (
+        <PageItem
+          key={'page-' + p[0]}
+          pages={p}
+          page={page}
+          onClick={onClick}
+        />
+      ))}
+      {nextRangePage > 0 && (
+        <>
+          <PageItem
+            pages={[nextRangePage, `${baseUrl}${nextRangePage}`]}
+            page={page}
+            icon={<MdArrowForwardIos />}
+            onClick={onClick}
+          />
+          <PageItem
+            pages={[lastPage, `${baseUrl}${lastPage}`]}
+            page={page}
+            icon={<MdLastPage />}
+            onClick={onClick}
+          />
+        </>
+      )}
     </Wrapper>
   )
 }
