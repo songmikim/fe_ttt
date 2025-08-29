@@ -4,7 +4,8 @@ import { useRouter } from 'next/navigation'
 import LayerPopup from '@/app/_global/components/LayerPopup'
 import ContentBox from '@/app/_global/components/ContentBox'
 import NoticeModal from '@/app/main/_components/NoticeModal'
-import { getList } from '@/app/board/_services/BoardData'
+import type { BoardDataType } from '@/app/board/_types/BoardType'
+import useFetchCSR from '@/app/_global/hooks/useFetchCSR'
 
 import {
   PageWrapper,
@@ -15,11 +16,12 @@ import {
 } from './MainContainerStyle'
 import { fetchRecycleTotalCount } from '../services/actions'
 
-export  default async function MainContainer() {
+export  default function MainContainer() {
   const router = useRouter()
   const [isOpen, setIsOpen] = useState(false)
   const [totalCount, setTotalCount] = useState(0)
-  const { items } = await getList('notice', { limit: 5 })
+  const [items, setItems] = useState<Array<BoardDataType>>([])
+  const { fetchCSR, ready } = useFetchCSR()
   const onClick = useCallback(() => router.push('/recycle'), [router])
 
   useEffect(() => {
@@ -29,6 +31,17 @@ export  default async function MainContainer() {
         console.error('분리수거 카운트 조회 실패:', err)
       })
   }, [])
+
+  useEffect(() => {
+    if (!ready) return
+    fetchCSR('/board/list/notice?limit=5')
+      .then((res) => res.json())
+      .then((data) => setItems(data.items ?? []))
+      .catch((err) => {
+        console.error('공지사항 불러오기 실패:', err)
+      })
+  }, [fetchCSR, ready])
+
 
   return (
     <PageWrapper>
