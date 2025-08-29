@@ -12,7 +12,7 @@ type CommonContextType = {
 
 const CommonContext = createContext<CommonContextType>({
   states: { mainTitle: '' },
-  actions: { setMainTitle: (title: string) => {} },
+  actions: { setMainTitle: () => {} },
 })
 
 const CommonProvider = ({ children }) => {

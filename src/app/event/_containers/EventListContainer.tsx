@@ -1,46 +1,46 @@
 'use client'
 
-import React, { useMemo, useState } from 'react'
+import React, { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import EventList from '../_components/EventList'
-import type { EventType } from '../_types'
+import type { EventType, PaginationType } from '../_types'
+import type CommonSearchType from '@/app/_global/types/CommonSearchType'
 
 type Props = {
   events: EventType[]
+  pagination: PaginationType
+  search?: CommonSearchType
 }
 
-const EventListContainer = ({ events }: Props) => {
-  const [query, setQuery] = useState('')
-  const [page, setPage] = useState(1)
-  const itemsPerPage = 4
+const EventListContainer = ({ events, pagination, search }: Props) => {
+  const [query, setQuery] = useState(search?.skey ?? '')
+  const router = useRouter()
 
-  const filteredEvents = useMemo(() => {
-    return events.filter((event) =>
-      event.title.toLowerCase().includes(query.toLowerCase()),
-    )
-  }, [events, query])
-
-  const totalPages = Math.ceil(filteredEvents.length / itemsPerPage)
-  const paginatedEvents = useMemo(
-    () => filteredEvents.slice((page - 1) * itemsPerPage, page * itemsPerPage),
-    [filteredEvents, page],
-  )
-
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setQuery(e.target.value)
-    setPage(1)
+  }
+
+  const handleSearch = () => {
+    const params = new URLSearchParams()
+    if (query) params.set('skey', query)
+    params.set('page', '1')
+    router.push(`/event?${params.toString()}`)
   }
 
   const handlePageChange = (p: number) => {
-    setPage(p)
+    const params = new URLSearchParams()
+    if (query) params.set('skey', query)
+    params.set('page', String(p))
+    router.push(`/event?${params.toString()}`)
   }
 
   return (
     <EventList
       query={query}
+      onChange={handleChange}
       onSearch={handleSearch}
-      events={paginatedEvents}
-      page={page}
-      totalPages={totalPages}
+      events={events}
+      pagination={pagination}
       onPageChange={handlePageChange}
     />
   )

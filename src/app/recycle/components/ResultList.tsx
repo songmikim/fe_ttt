@@ -1,10 +1,10 @@
 import React from 'react'
 import styled from 'styled-components'
-import color from '@/app/_global/styles/color'
 import fontsize from '@/app/_global/styles/fontsize'
+import color from '@/app/_global/styles/color'
 
 /* 스타일 정리 S */
-const { dark } = color
+const { dark, info } = color 
 const { normal, extra } = fontsize
 
 const ResultList = styled.div`
@@ -17,7 +17,6 @@ const ResultList = styled.div`
 const ResultItem = styled.div`
   width: 220px;
   min-height: 180px;
-  border: 1.5px solid ${dark};
   border-radius: 12px;
   padding: 8px;
   display: flex;
@@ -33,12 +32,18 @@ const Categories = styled.div`
   font-size: ${normal};
 `
 
-const CategoryItem = styled.div`
+const CategoryItem = styled.button`
   padding: 4px 8px;
   border-radius: 6px;
   font-size: ${extra};
   font-weight: 500;
-  white-space: nowrap;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: ${dark}; 
+  &:hover {
+    color: ${info};
+  }
 `
 
 const Images = styled.div`
@@ -59,11 +64,18 @@ const ImageItem = styled.img`
 export type FlatImage = {
   key: string
   category: string
+  categoryKey: string
   url: string
   name: string
 }
 
-export function ResultComponents({ items }: { items: FlatImage[] }) {
+export function ResultComponents({
+  items,
+  onSelect,
+}: {
+  items: FlatImage[]
+  onSelect: (cat: string) => void
+}) {
   if (!items?.length) {
     return <div className="noData">데이터가 없습니다.</div>
   }
@@ -72,12 +84,16 @@ export function ResultComponents({ items }: { items: FlatImage[] }) {
     <ResultList>
       {items.map((img) => (
         <ResultItem key={img.key}>
-          <Categories>
-            {img.category && <CategoryItem>{img.category}</CategoryItem>}
-          </Categories>
           <Images>
             <ImageItem src={img.url} alt={img.name} />
           </Images>
+          <Categories>
+            {img.category && (
+              <CategoryItem onClick={() => onSelect(img.categoryKey)}>
+                {img.category}
+              </CategoryItem>
+            )}
+          </Categories>
         </ResultItem>
       ))}
     </ResultList>

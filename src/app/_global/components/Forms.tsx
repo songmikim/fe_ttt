@@ -1,5 +1,4 @@
 'use client'
-import React from 'react'
 import styled, { css } from 'styled-components'
 import color from '../styles/color'
 import fontsize from '../styles/fontsize'
@@ -32,6 +31,22 @@ type CommonType = {
 export const Input = styled.input<CommonType>`
   ${commonStyle}
   height: 50px;
+  ${({ width }) =>
+    width &&
+    css`
+      width: ${width}px;
+    `}
+  ${({ height }) =>
+    height &&
+    css`
+      height: ${height}px;
+    `}
+`
+
+export const Select = styled.select<CommonType>`
+  ${commonStyle}
+  height: 50px;
+  padding: 0;
   ${({ width }) =>
     width &&
     css`
@@ -113,6 +128,10 @@ export const TableRows = styled.table`
       font-size: ${medium};
       height: 45px;
       padding: 0 10px;
+
+      svg {
+        font-size: 2rem;
+      }
     }
     th + th {
       border-left: 1px solid ${light};
@@ -123,6 +142,10 @@ export const TableRows = styled.table`
     td {
       border-bottom: 1px solid #ccc;
       padding: 10px;
+
+      svg {
+        font-size: 2rem;
+      }
     }
   }
 `

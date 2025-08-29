@@ -1,14 +1,14 @@
 import type { Metadata } from 'next'
 import { cookies } from 'next/headers'
 import './globals.css'
-import Header from './_global/outlines/Header'
-import Footer from './_global/outlines/Footer'
 import StyledComponentsRegistry from './registry'
 import { getLoggedMember } from './member/_services/actions'
 import { UserProvider } from './_global/contexts/UserContext'
 import { CommonProvider } from './_global/contexts/CommonContext'
 import LayoutContainer from './_global/wrappers/LayoutContainer'
 import { redirect } from 'next/navigation'
+
+export const dynamic = 'force-dynamic' // 모든 페이지는 SSR 강제
 
 export const metadata: Metadata = {
   title: 'vinllage',

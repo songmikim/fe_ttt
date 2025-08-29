@@ -27,7 +27,7 @@ const Wrapper = styled.div`
     border-radius: 3px;
     min-width: 45px;
     padding: 0 5px;
-
+    cursor: pointer;
     &.on {
       background: ${black};
       color: ${white};

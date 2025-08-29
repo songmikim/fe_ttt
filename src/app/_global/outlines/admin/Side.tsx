@@ -1,12 +1,11 @@
 import React from 'react'
-import { useParams, usePathname } from 'next/navigation'
+import {  usePathname } from 'next/navigation'
 import classNames from 'classnames'
 import styled from 'styled-components'
 import color from '../../styles/color'
 import fontsize from '../../styles/fontsize'
 import Link from 'next/link'
-import { on } from 'events'
-const { dark, white, black } = color
+const { dark, white } = color
 const { big } = fontsize
 
 const StyledAside = styled.aside`

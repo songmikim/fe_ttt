@@ -1,3 +1,4 @@
+import ContentBox from '@/app/_global/components/ContentBox'
 import EventDetailContainer from '../_containers/EventDetailContainer'
 import { MainTitle } from '../../_global/components/TitleBox'
 import { getEvent } from '../_services/actions'
@@ -12,9 +13,9 @@ export default async function EventDetailPage({ params }) {
   }
   
   return (
-    <div className="layout-width pd-top30">
+    <ContentBox style={{ paddingTop: 30 }}>
       <MainTitle border="true">환경 행사</MainTitle>
       <EventDetailContainer event={event} />
-    </div>
+    </ContentBox>
   )
 }

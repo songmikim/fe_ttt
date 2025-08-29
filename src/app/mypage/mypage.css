@@ -1,0 +1,14 @@
+/* 마이페이지 기본 레이아웃 공통 */
+main.mypage {
+  display: flex;
+  justify-content: center;
+  min-width: 320px;
+  max-width: 1150px;
+  padding: 0 10px;
+  margin: 0 auto;
+}
+
+main.mypage > section {
+  flex-grow: 1;
+  padding: 30px 15px;
+}

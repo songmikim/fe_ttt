@@ -49,12 +49,12 @@ const StyledHeader = styled.header`
 
 const Header = () => {
   const { loggedMember } = useUser()
-  
+
   return (
     <StyledHeader>
       <div className="left">
         <Link href="/">
-          <Image src={logo} alt="로고" />
+          <Image src={logo} alt="로고" width={50} height={50} />
         </Link>
         <span className="badge">
           {loggedMember.name}({loggedMember.email})님 환영합니다.

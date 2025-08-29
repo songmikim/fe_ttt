@@ -18,6 +18,11 @@ export type DetectDataResponse = DetectDataSuccess | DetectDataError
 
 /**
  * 감지된 분리수거 데이터 저장 처리
+ *
+ * - API 서버의 `/recycle` 엔드포인트로 FormData 전송
+ * - 로그인 상태라면 JWT 토큰(Authorization 헤더) 함께 전달
+ * - 성공 시: 저장된 결과(DetectedRecycle) JSON 반환 (+ Member 정보는 @JsonIgnore)
+ * - 실패 시: 서버에서 내려준 에러 메시지 또는 상태 코드 메시지 반환
  */
 export async function processDetectData(
   formData: FormData,
@@ -25,21 +30,30 @@ export async function processDetectData(
   try {
     const apiUrl = `${process.env.API_URL}/recycle`
 
+    // 쿠키에서 JWT 토큰 추출
+    const cookieStore = await cookies()
+    const token = cookieStore.get('token')?.value
+
+    // API 요청
     const res = await fetch(apiUrl, {
       method: 'POST',
+      headers: {
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
       body: formData,
     })
 
+    // 응답 상태 확인
     if (!res.ok) {
-      // 에러 응답일 때 서버에서 오는 메시지 꺼내기
+      // 에러 응답일 경우: 서버 메시지 파싱
       const { messages } = await res.json().catch(() => ({}))
       return messages ?? { global: `Upload failed with ${res.status}` }
     }
 
-    // 정상 저장된 경우
+    // 정상 저장된 경우: JSON 결과 반환
     return (await res.json()) as DetectDataSuccess
   } catch (err: any) {
-    // 네트워크 에러 등
+    // 네트워크 오류 등 예외 처리
     return { global: err?.message }
   }
 }
@@ -80,5 +94,7 @@ export async function processRecycle() {
   // 허용 횟수 넘어가면 로그인 페이지로 이동
   if (count >= MAX_GUEST_ATTEMPTS) {
     redirect('/member/login?reload=true')
+  } else {
+    redirect('/recycle/detect?reload=true')
   }
 }

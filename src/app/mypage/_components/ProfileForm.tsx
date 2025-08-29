@@ -1,113 +1,207 @@
 'use client'
 
-import React from 'react'
+import React, { useState } from 'react'
 import styled from 'styled-components'
-import { Input } from '@/app/_global/components/Forms'
 import { SubmitButton } from '@/app/_global/components/Buttons'
+import { Input } from '@/app/_global/components/Forms'
 import MessageBox from '@/app/_global/components/MessageBox'
+import FileUpload from '@/app/_global/components/FileUpload'
+import FileImages from '@/app/_global/components/FileImages'
+import { useRouter } from 'next/navigation'
+import LayerPopup from '@/app/_global/components/LayerPopup'
 
 const StyledForm = styled.form`
-  max-width: 500px;
-  margin: 0 auto;
-`
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 
-type ProfileFormProps = {
-  form: {
-    email: string
-    name: string
-    mobile: string
-    password: string
-    confirmPassword: string
+  dl {
+    margin: 0;
   }
-  errors: any
-  pending: boolean
-  action: any
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
-}
 
-const renderErr = (v: any) => (Array.isArray(v) ? v[0] : v ?? '')
+  .button-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-top: 20px;
 
+    .delete-link {
+      font-size: 14px;
+      color: #999;
+      cursor: pointer;
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+        color: #666;
+      }
+    }
+  }
+`
 const ProfileForm = ({
   form,
   errors,
-  pending,
   action,
+  pending,
   onChange,
-}: ProfileFormProps) => {
+  fileUploadCallback,
+  fileDeleteCallback,
+  isSocialUser = false,
+}) => {
+  const [open, setOpen] = useState(false)
+  const router = useRouter()
+
   return (
     <StyledForm action={action} autoComplete="off">
-      {/* 이메일 (수정 불가, 기본값 있음) */}
-      <Input
-        type="email"
-        name="email"
-        placeholder="이메일"
-        value={form.email}
-        onChange={onChange}
-        disabled
-      />
-      {errors?.email && (
-        <MessageBox color="danger">{renderErr(errors.email)}</MessageBox>
-      )}
+      <Input type="hidden" name="gid" value={form.gid ?? ''} />
 
-      {/* 이름 (기본값 있음) */}
-      <Input
-        type="text"
-        name="name"
-        placeholder="이름"
-        value={form.name}
-        onChange={onChange}
-      />
-      {errors?.name && (
-        <MessageBox color="danger">{renderErr(errors.name)}</MessageBox>
-      )}
+      <dl>
+        <dt>이메일</dt>
+        <dd>
+          <Input type="email" name="email" value={form.email} readOnly />
+        </dd>
+      </dl>
+      <dl>
+        <dt>회원명</dt>
+        <dd>
+          <Input
+            type="text"
+            name="name"
+            value={form.name}
+            onChange={onChange}
+          />
+          <MessageBox color="danger">
+            {errors?.status !== 'DONE' && errors?.name}
+          </MessageBox>
+        </dd>
+      </dl>
+      <dl>
+        <dt>비밀번호</dt>
+        <dd>
+          <Input
+            type="password"
+            name="password"
+            value={form.password ?? ''}
+            onChange={onChange}
+            disabled={isSocialUser}
+          />
+          {isSocialUser && (
+            <p className="disabled-text">
+              소셜 로그인 회원은 비밀번호를 설정할 수 없습니다.
+            </p>
+          )}
+          <MessageBox color="danger">
+            {errors?.status !== 'DONE' && errors?.password}
+          </MessageBox>
+        </dd>
+      </dl>
+      <dl>
+        <dt>비밀번호 확인</dt>
+        <dd>
+          <Input
+            type="password"
+            name="confirmPassword"
+            value={form.confirmPassword ?? ''}
+            onChange={onChange}
+            disabled={isSocialUser}
+          />
+          {isSocialUser && (
+            <p className="disabled-text">
+              소셜 로그인 회원은 비밀번호 확인이 필요하지 않습니다.
+            </p>
+          )}
+          <MessageBox color="danger">{errors?.confirmPassword}</MessageBox>
+        </dd>
+      </dl>
+      <dl>
+        <dt>휴대전화번호</dt>
+        <dd>
+          <Input
+            type="text"
+            name="mobile"
+            value={form.mobile}
+            onChange={onChange}
+          />
+          <MessageBox color="danger">
+            {errors?.status !== 'DONE' && errors?.mobile}
+          </MessageBox>
+        </dd>
+      </dl>
+      <dl>
+        <dt>프로필 이미지</dt>
+        <dd>
+          <FileImages
+            items={form.profileImage}
+            width={250}
+            height={250}
+            viewOrgImage={true}
+            callback={fileDeleteCallback}
+          />
+          <FileUpload
+            gid={form.gid}
+            single={true}
+            imageOnly={true}
+            callback={fileUploadCallback}
+          />
+        </dd>
+      </dl>
+      <div className="button-group">
+        <SubmitButton type="submit" width={350} disabled={pending}>
+          수정하기
+        </SubmitButton>
+        <a
+          href="/member/withdraw"
+          className="delete-link"
+          onClick={(e) => {
+            e.preventDefault()
+            setOpen(true)
+          }}
+        >
+          탈퇴하기
+        </a>
+      </div>
 
-      {/* 휴대폰 */}
-      <Input
-        type="text"
-        name="mobile"
-        placeholder="휴대폰"
-        inputMode="numeric"
-        pattern="\d*"
-        value={form.mobile}
-        onChange={onChange}
-      />
-      {errors?.mobile && (
-        <MessageBox color="danger">{renderErr(errors.mobile)}</MessageBox>
-      )}
-
-      {/* 비밀번호 */}
-      <Input
-        type="password"
-        name="password"
-        placeholder="비밀번호 (변경 시 입력)"
-        value={form.password}
-        onChange={onChange}
-      />
-      {errors?.password && (
-        <MessageBox color="danger">{renderErr(errors.password)}</MessageBox>
-      )}
-
-      {/* 비밀번호 확인 */}
-      <Input
-        type="password"
-        name="confirmPassword"
-        placeholder="비밀번호 확인"
-        value={form.confirmPassword}
-        onChange={onChange}
-      />
-      {errors?.confirmPassword && (
-        <MessageBox color="danger">{renderErr(errors.confirmPassword)}</MessageBox>
-      )}
-
-      {/* 글로벌 에러 */}
-      {errors?.global && (
-        <MessageBox color="danger">{renderErr(errors.global)}</MessageBox>
-      )}
-
-      {/* 제출 버튼 */}
-      <SubmitButton type="submit" disabled={pending}>
-        {pending ? '저장 중...' : '정보 수정'}
-      </SubmitButton>
+      <LayerPopup
+        isOpen={open}
+        onClose={() => setOpen(false)}
+        title="회원 탈퇴"
+        width={400}
+      >
+        <p style={{ textAlign: 'center', marginBottom: '20px' }}>
+          탈퇴 메일을 전송하시겠습니까?
+        </p>
+        <div style={{ display: 'flex', justifyContent: 'center', gap: '10px' }}>
+          <button
+            style={{
+              padding: '8px 16px',
+              borderRadius: '8px',
+              background: '#d9534f',
+              color: '#fff',
+              border: 'none',
+              cursor: 'pointer',
+            }}
+            onClick={() => {
+              setOpen(false)
+              router.push('/member/withdraw')
+            }}
+          >
+            예
+          </button>
+          <button
+            style={{
+              padding: '8px 16px',
+              borderRadius: '8px',
+              background: '#ccc',
+              border: 'none',
+              cursor: 'pointer',
+            }}
+            onClick={() => setOpen(false)}
+          >
+            아니오
+          </button>
+        </div>
+      </LayerPopup>
     </StyledForm>
   )
 }

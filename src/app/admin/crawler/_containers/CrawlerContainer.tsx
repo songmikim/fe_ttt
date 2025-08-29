@@ -1,6 +1,7 @@
 'use client'
 import React, { useState, useCallback } from 'react'
 import { Button } from '@/app/_global/components/Buttons'
+import useConfirmDialog from '@/app/_global/hooks/useConfirmDialog'
 import CrawlerConfigForm from '../_components/CrawlerConfigForm'
 import type { CrawlerConfigType } from '../_types'
 import {
@@ -30,6 +31,7 @@ const CrawlerContainer = ({ initialConfigs, initialScheduler }: Props) => {
   )
   const [scheduler, setScheduler] = useState(initialScheduler)
   const [saving, setSaving] = useState(false)
+  const confirmDialog = useConfirmDialog()
 
   const onChange = useCallback(
     (
@@ -50,9 +52,17 @@ const CrawlerContainer = ({ initialConfigs, initialScheduler }: Props) => {
     setForms((prev) => [...prev, { ...emptyForm }])
   }, [])
 
-  const removeForm = useCallback((index) => {
-    setForms((prev) => prev.filter((_, i) => i !== index))
-  }, [])
+  const removeForm = useCallback(
+    (index: number) => {
+      confirmDialog({
+        text: '정말 삭제하겠습니까?',
+        confirmCallback: () => {
+          setForms((prev) => prev.filter((_, i) => i !== index))
+        },
+      })
+    },
+    [confirmDialog],
+  )
 
   const onTest = useCallback(
     async (index: number) => {

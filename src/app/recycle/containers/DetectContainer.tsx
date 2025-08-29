@@ -4,7 +4,6 @@ import DetectObject from '../components/DetectObject'
 import DetectedItems from '../components/DetectedItems'
 import { Button } from '@/app/_global/components/Buttons'
 import { processDetectData } from '../_services/actions'
-import { redirect } from 'next/navigation'
 import { useRouter } from 'next/navigation'
 
 const DetectContainer = () => {
@@ -29,6 +28,8 @@ const DetectContainer = () => {
     formData.append('items', JSON.stringify(_items))
 
     const data = await processDetectData(formData) // API 백엔드 반영
+
+    console.log('data', data)
 
     if ('gid' in data) {
       router.push(`/recycle/result?gid=${data.gid}`)

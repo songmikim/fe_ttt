@@ -1,15 +1,14 @@
 'use client'
+import { useMemo } from 'react'
 import { usePathname } from 'next/navigation'
 import useUser from '../hooks/useUser'
 import loadable from '@loadable/component'
 import styled from 'styled-components'
 const AdminHeader = loadable(() => import('../outlines/admin/Header'))
 const AdminSide = loadable(() => import('../outlines/admin/Side'))
-const AdminSubMenu = loadable(() => import("../outlines/admin/SubMenu"))
+const AdminSubMenu = loadable(() => import('../outlines/admin/SubMenu'))
 const Header = loadable(() => import('../outlines/Header'))
 const Footer = loadable(() => import('../outlines/Footer'))
-
-const MainMenu = loadable(() => import("../outlines/MainMenu"))
 
 const AdminMain = styled.main`
   display: flex;
@@ -22,10 +21,19 @@ const AdminMain = styled.main`
     padding: 30px 50px;
   }
 `
+function getMainClasses(pathname) {
+  const paths = pathname.split('/')
+  const data: Array<string> = []
+  if (paths.length > 1) data.push(paths[1])
+  if (paths.length > 2) data.push(`${paths[1]}-${paths[2]}`)
+
+  return ' ' + data.join(' ')
+}
 
 export default function LayoutContainer({ children }) {
   const { isAdmin } = useUser()
   const pathname = usePathname()
+  const mainClasses = useMemo(() => getMainClasses(pathname), [pathname])
 
   return isAdmin && pathname.startsWith('/admin') ? (
     <>
@@ -41,8 +49,12 @@ export default function LayoutContainer({ children }) {
   ) : (
     <>
       <Header />
-      <MainMenu />
-      <main className="main-content">{children}</main>
+      <main
+        suppressHydrationWarning={true}
+        className={'main-content' + mainClasses}
+      >
+        {children}
+      </main>
       <Footer />
     </>
   )

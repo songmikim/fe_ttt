@@ -112,10 +112,12 @@ export async function processJoin(errors, formData: FormData) {
 export async function processLogin(errors, formData: FormData) {
   errors = {}
   let hasErrors: boolean = false
+
   const params: { email?: string; password?: string; redirectUrl?: string } = {
     email: formData.get('email')?.toString(),
     password: formData.get('password')?.toString(),
   }
+
   // 유효성 검사 S
   if (!params.email || !params.email.trim()) {
     errors.email = '이메일을 입력하세요.'
@@ -143,26 +145,35 @@ export async function processLogin(errors, formData: FormData) {
   })
 
   if (res.status === 200) {
-    // 로그인 성공, 토큰 발급 성공
-    const token = await res.text()
-    // 로그인 처리 - 토큰을 쿠키에 저장
+    // 로그인 성공 -> JSON 응답 받기
+    const data = await res.json()
+
+    // 토큰 꺼내서 쿠키 저장
     const cookie = await cookies()
-    cookie.set('token', token, {
+    cookie.set('token', data.token, {
       httpOnly: true,
       path: '/',
     })
 
     revalidateTag('loggedMember')
+
+    // 로그인 성공 시 페이지 이동 (forceChangePassword 여부에 따른 처리)
+    if (!data.forceChangePassword) {
+      // 비밀번호로 로그인
+      // - redurectUrl이 있다면 그 주소로 이동 아니면 메인페이지(/)로 이동
+      let redirectUrl = formData.get('redirectUrl')?.toString()
+      redirectUrl = redirectUrl ? redirectUrl : '/'
+      redirect(redirectUrl + '?reload=true')
+    } else {
+      // 임시 비밀번호로 로그인
+      // - 일단 마이페이지 정보 수정 페이지로 이동
+      redirect('/mypage/profile?reload=true')
+    }
   } else {
-    // 로그인 실패
+    // 로그인 실패 처리
     const json = await res.json()
     return json.messages ? json.messages : { global: json.messages }
   }
-
-  // 로그인 성공시 페이지 이동 - redurectUrl이 있다면 그 주소로 이동 아니면 메인페이지(/)로 이동
-  let redirectUrl = formData.get('redirectUrl')?.toString()
-  redirectUrl = redirectUrl ? redirectUrl : '/'
-  redirect(redirectUrl + '?reload=true')
 }
 
 /**

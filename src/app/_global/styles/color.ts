@@ -1,5 +1,5 @@
 const color = {
-  primary: '#0d6efd',
+  primary: '#000',
   secondary: '#6c757d',
   success: '#198754',
   info: '#0dcaf0',
@@ -9,7 +9,8 @@ const color = {
   dark: '#212529',
   white: '#fff',
   black: '#000',
-  green: '#4C6265',
+  green: '#D2D591',
+  naverGreen: '#03c75a',
 }
 
 export default color

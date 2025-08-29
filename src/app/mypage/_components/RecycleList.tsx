@@ -3,6 +3,7 @@
 import React, { useState, useCallback } from 'react'
 import styled from 'styled-components'
 import LayerPopup from '@/app/_global/components/LayerPopup'
+import Image from 'next/image'
 
 export type DetectedRecycle = {
   seq: number
@@ -55,7 +56,7 @@ export const RecycleList = ({ items }: { items: DetectedRecycle[] }) => {
   } | null>(null)
   const onClose = useCallback(() => setSelected(null), [])
 
-  if (!items.length) return <p>저장된 이미지가 없습니다.</p>
+  if (!items || !items.length) return <p>저장된 이미지가 없습니다.</p>
 
   return (
     <>
@@ -68,24 +69,39 @@ export const RecycleList = ({ items }: { items: DetectedRecycle[] }) => {
             console.error('imageUrl parse error', e)
           }
 
-          if (!images.length) return null
-          const first = images[0]
-
-          return (
-            <FileItem key={f.seq} onClick={() => setSelected(first)}>
-              <img src={first.url} alt={first.name} />
-              <div className="name">{first.name}</div>
+          return images.map((img, idx) => (
+            <FileItem key={`${f.seq}-${idx}`} onClick={() => setSelected(img)}>
+              <Image
+                src={img.url}
+                alt={img.name}
+                width={180}
+                height={150}
+                style={{ objectFit: 'cover', borderRadius: '6px' }}
+              />
+              <div className="name">{img.name}</div>
             </FileItem>
-          )
+          ))
         })}
       </ListWrapper>
 
-      <LayerPopup isOpen={!!selected} onClose={onClose} width={600}>
+      <LayerPopup
+        isOpen={!!selected}
+        onClose={onClose}
+        width={400}
+        height={400}
+      >
         {selected && (
-          <img
+          <Image
             src={selected.url}
             alt={selected.name}
-            style={{ maxWidth: '100%', maxHeight: '70vh', borderRadius: '8px' }}
+            width={400}
+            height={400}
+            style={{
+              objectFit: 'contain',
+              borderRadius: '8px',
+              maxWidth: '100%',
+              maxHeight: '100%',
+            }}
           />
         )}
       </LayerPopup>

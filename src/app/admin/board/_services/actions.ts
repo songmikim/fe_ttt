@@ -1,21 +1,12 @@
 'use server'
 import { redirect } from 'next/navigation'
 import { fetchSSR } from '@/app/_global/libs/utils'
+import { toPlainObj } from '@/app/_global/libs/commons'
 
 export async function processBoardConfig(errors, formData: FormData) {
+
   errors = {}
-  const params: any = {}
-
-  // 필요한 필드와 값만 추출
-  for (const [key, value] of formData.entries()) {
-    if (key.startsWith('$ACTION_')) continue
-    let _value: string | boolean = value.toString()
-    if (['true', 'false'].includes(_value)) {
-      _value = _value === 'true'
-    }
-
-    params[key] = _value
-  }
+  const params = toPlainObj(formData)
 
   // 필수 항목 검증 S
   let hasErrors: boolean = false
@@ -33,9 +24,11 @@ export async function processBoardConfig(errors, formData: FormData) {
   if (hasErrors) {
     return errors
   }
+
+
   // 필수 항목 검증 S
   // API 백엔드에 처리 요청
-  const res = await fetchSSR('/board/update/config', {
+  const res = await fetchSSR('/admin/board/save', {
     method: params.mode === 'update' ? 'PATCH' : 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -50,4 +43,19 @@ export async function processBoardConfig(errors, formData: FormData) {
 
   // 처리 성공시 - 게시판 설정 목록으로 이동
   redirect('/admin/board')
+}
+
+
+
+export async function deleteBoards(bids: string[]) {
+  const res = await fetchSSR(`/admin/board/delete`, {
+    method: "DELETE",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(bids),
+  });
+
+  console.log(res)
+
+  if (!res.ok) throw new Error("삭제 실패");
+  return await res.text();
 }

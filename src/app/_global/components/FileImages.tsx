@@ -7,13 +7,12 @@ import LayerPopup from './LayerPopup'
 import useFetchCSR from '../hooks/useFetchCSR'
 import useConfirmDialog from '../hooks/useConfirmDialog'
 import color from '../styles/color'
-const { dark, white } = color
+const { white } = color
 
 const ImageItems = styled.ul`
   display: flex;
   flex-wrap: wrap;
   li {
-    border: 3px solid ${dark};
     position: relative;
     margin: 3px 0;
     border-radius: 3px;
@@ -79,7 +78,7 @@ const ImageItem = ({
         },
       })
     },
-    [fetchCSR, callback],
+    [fetchCSR, callback, confirmDialog],
   )
 
   return (

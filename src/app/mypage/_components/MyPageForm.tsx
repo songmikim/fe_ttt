@@ -1,61 +1,74 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
-import { getLoggedMember, deleteMe } from '../_services/actions'
+import React from 'react'
+import styled from 'styled-components'
+import FileImages from '@/app/_global/components/FileImages'
 
-type Member = {
-  email: string
-  name: string
-  mobile: string
-}
+const StyledProfileView = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 
-export default function MyPageForm() {
-  const [member, setMember] = useState<Member | null>(null)
+  dl {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
 
-  useEffect(() => {
-    const fetchMember = async () => {
-      const data = await getLoggedMember()
-      if (data) setMember(data)
+    dt {
+      font-weight: bold;
+      font-size: 14px;
+      color: #333;
     }
-    fetchMember()
-  }, [])
 
-  const handleDelete = async () => {
-    if (confirm('정말 탈퇴하시겠습니까?')) {
-      await deleteMe()
+    dd {
+      margin: 0;
+      font-size: 15px;
+      color: #555;
     }
   }
+`
 
-  if (!member) return <p>회원 정보를 불러오는 중...</p>
+type Props = {
+  form: {
+    email: string
+    name: string
+    mobile: string
+    profileImage?: any
+  }
+}
 
+const MypageForm = ({ form }: Props) => {
   return (
-    <div>
-      <ul>
-        <li>
-          <strong>이메일:</strong> {member.email}
-        </li>
-        <li>
-          <strong>이름:</strong> {member.name}
-        </li>
-        <li>
-          <strong>휴대폰:</strong> {member.mobile}
-        </li>
-      </ul>
+    <StyledProfileView>
+      <dl>
+        <dt>프로필 사진</dt>
+        <dd>
+          <FileImages
+            items={form.profileImage}
+            width={250}
+            height={250}
+            viewOrgImage={true}
+          />
+        </dd>
+      </dl>
 
-      <button
-        style={{
-          marginTop: '20px',
-          padding: '10px 20px',
-          backgroundColor: 'red',
-          color: 'white',
-          border: 'none',
-          borderRadius: '5px',
-          cursor: 'pointer',
-        }}
-        onClick={handleDelete}
-      >
-        회원 탈퇴
-      </button>
-    </div>
+      <dl>
+        <dt>이메일</dt>
+        <dd>{form.email}</dd>
+      </dl>
+
+      <dl>
+        <dt>회원명</dt>
+        <dd>{form.name}</dd>
+      </dl>
+
+      <dl>
+        <dt>휴대전화번호</dt>
+        <dd>{form.mobile}</dd>
+      </dl>
+    </StyledProfileView>
   )
 }
+
+export default React.memo(MypageForm)

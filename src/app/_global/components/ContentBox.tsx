@@ -8,10 +8,9 @@ type ContentBoxType = {
 }
 
 const ContentBox = styled.section<ContentBoxType>`
-  padding: 50px;
+  padding: 50px 10px;
   min-width: 320px;
   max-width: 1150px;
-  padding: 0 10px;
   margin: 0 auto;
   ${({ width }) =>
     width &&

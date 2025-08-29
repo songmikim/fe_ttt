@@ -4,7 +4,6 @@ import { MdFileUpload } from 'react-icons/md'
 import { Button } from './Buttons'
 import useFetchCSR from '../hooks/useFetchCSR'
 import useAlertDialog from '../hooks/useAlertDialog'
-import { text } from 'stream/consumers'
 
 type FileType = {
   gid: string | number
@@ -15,14 +14,15 @@ type FileType = {
 }
 
 const FileBox = ({ gid, location, single, imageOnly, callback }: FileType) => {
-  const fetchCSR = useFetchCSR()
+  const { fetchCSR, ready } = useFetchCSR()
   const alertDialog = useAlertDialog()
+
   const onUploadClick = useCallback(() => {
     const fileEl = document.createElement('input')
     fileEl.type = 'file'
     fileEl.multiple = single ? false : true
     if (imageOnly) {
-        fileEl.accept = 'image/*'
+      fileEl.accept = 'image/*'
     }
     fileEl.click()
     fileEl.removeEventListener('change', fileUploadHandler)
@@ -37,20 +37,20 @@ const FileBox = ({ gid, location, single, imageOnly, callback }: FileType) => {
 
       // 이미지 형식이 아닌 파일이 있는지 검사
       if (imageOnly) {
-        let allImages = true;
+        let allImages = true
         for (const file of files) {
           // 이미지가 아닌 파일이 있는 경우
-          if (file.type.indexOf("image/") === -1) {
-            allImages = false;
+          if (file.type.indexOf('image/') === -1) {
+            allImages = false
             break
           }
         }
 
         if (!allImages) {
           // 검증 실패
-          alertDialog ({
+          alertDialog({
             text: '이미지 형식 파일만 업로드 하세요.',
-        })
+          })
           return
         }
       }
@@ -72,6 +72,8 @@ const FileBox = ({ gid, location, single, imageOnly, callback }: FileType) => {
       for (const file of files) {
         formData.append('file', file)
       }
+
+      if (!ready) return
       fetchCSR('/file/upload', {
         method: 'POST',
         body: formData,
@@ -83,11 +85,11 @@ const FileBox = ({ gid, location, single, imageOnly, callback }: FileType) => {
           }
         })
     }
-  }, [fetchCSR, gid, location, imageOnly, single, callback])
+  }, [fetchCSR, ready, gid, location, imageOnly, single, callback, alertDialog])
 
   return (
     <>
-      <Button type="button" onClick={onUploadClick}>
+      <Button type="button" onClick={onUploadClick} width={150}>
         <MdFileUpload /> 파일 업로드
       </Button>
     </>

@@ -149,7 +149,7 @@ const DetectObject = ({ width, height, callback }: PropType) => {
           detect()
         }, 1000)
       })
-      .catch((err) => {
+      .catch(() => {
         // 웹캠이 설치되어 있지 않거나, 웹캠 권한을 허용하지 않은 경우..
         if (!dialogRef.current) {
           dialogRef.current = true
@@ -194,7 +194,7 @@ const DetectObject = ({ width, height, callback }: PropType) => {
         <ul>
           <li>1. 주소창 왼쪽의 🔒 혹은 ℹ️ 아이콘을 클릭합니다.</li>
           <li>
-            2. "카메라" 권한을 <strong>허용</strong>으로 변경합니다.
+            2. 카메라 권한을 <strong>허용</strong>으로 변경합니다.
           </li>
           <li>3. 페이지를 새로고침하면 정상적으로 작동합니다.</li>
         </ul>

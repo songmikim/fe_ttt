@@ -1,3 +1,4 @@
+
 import React, { useCallback } from 'react'
 import styled from 'styled-components'
 import { FiDownload } from 'react-icons/fi'
@@ -6,40 +7,40 @@ import useFetchCSR from '../hooks/useFetchCSR'
 import useConfirmDialog from '../hooks/useConfirmDialog'
 import color from '../styles/color'
 import fontsize from '../styles/fontsize'
-const { light } = color;
+const { light } = color
 const { small } = fontsize
 
 type FileType = {
-    items: any,
-    callback?: (item: any) => void
+  items: any
+  callback?: (item: any) => void
 }
 
 const StyledItems = styled.ul`
-    li {
-        padding: 8px 10px;
-        background: ${light};
-        font-size: ${small};
-        display: flex;
-    }
+  li {
+    padding: 8px 10px;
+    background: ${light};
+    font-size: ${small};
+    display: flex;
 
     a {
-        flex-grow: 1;
-        svg {
-            margin-left: 10px;
-        }
+      flex-grow: 1;
+      svg {
+        margin-left: 10px;
+      }
     }
 
     .icon-remove {
-        cursor: pointer;
+      cursor: pointer;
     }
 
     svg {
-        vertical-align: middle;
+      vertical-align: middle;
     }
+  }
 
-    li + li {
-        border-top: 1px solid #ccc;
-    }
+  li + li {
+    border-top: 1px solid #ccc;
+  }
 `
 
 const FileItems = ({ items, callback }: FileType) => {
@@ -60,26 +61,31 @@ const FileItems = ({ items, callback }: FileType) => {
             })
         },
       })
-    }, 
-    [fetchCSR, callback],
-)
+    },
+    [fetchCSR, callback, confirmDialog],
+  )
 
-    items = Array.isArray(items) ? items : items ? [items] : []
-    if (items.length === 0) return <></>
+  items = Array.isArray(items) ? items : items ? [items] : []
+  if (items.length === 0) return <></>
 
-    return (
+  return (
     <StyledItems>
-        {items.map(({ seq, fileName, fileDownloadUrl }) => (
+      {items.map(({ seq, fileName, fileDownloadUrl }) => (
         <li key={'file-' + seq}>
-            <a href={fileDownloadUrl}>
-                {fileName}
-                <FiDownload className='icon-download' />
-            </a>
-            <FaRegWindowClose className='icon-remove' onClick={() => onRemove(seq)}/>
+          <a href={fileDownloadUrl}>
+            #{fileName}
+            <FiDownload className="icon-download" />
+          </a>
+          {callback && (
+            <FaRegWindowClose
+              className="icon-remove"
+              onClick={() => onRemove(seq)}
+            />
+          )}
         </li>
-    ))}
+      ))}
     </StyledItems>
-    )
+  )
 }
 
 export default React.memo(FileItems)

@@ -7,21 +7,39 @@ import styled from 'styled-components'
 import color from '@/app/_global/styles/color'
 import fontsize from '@/app/_global/styles/fontsize'
 import Link from 'next/link'
-
 const { dark, white } = color
 const { big } = fontsize
 
-const StyledAside = styled.aside`
+
+const MyPageSide = styled.aside`
+  width: 240px;
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 6px;
+  padding: 20px;
+  font-size: ${big};
+  font-weight: 600;
+
+  h2 {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid ${dark};
+  }
+
   a {
     display: block;
-    height: 55px;
-    line-height: 54px;
-    border-bottom: 1px solid ${dark};
-    font-size: ${big};
-    padding: 0 25px;
+    font-size: 16px;
+    padding: 10px 15px;
     font-weight: 500;
     color: ${dark};
+    border-radius: 4px;
     text-decoration: none;
+
+    &:hover {
+      background: #f5f5f5;
+    }
   }
 
   a.on {
@@ -32,9 +50,8 @@ const StyledAside = styled.aside`
 
 const Side = () => {
   const urlPath = usePathname()
-
   return (
-    <StyledAside>
+    <MyPageSide>
       <Link
         href="/mypage"
         className={classNames({ on: urlPath === '/mypage' })}
@@ -43,18 +60,20 @@ const Side = () => {
       </Link>
       <Link
         href="/mypage/profile"
-        className={classNames({ on: urlPath.startsWith('/mypage/profile') })}
+        className={classNames({ on: urlPath === '/mypage/profile' })}
       >
-        내 프로필
+        개인 정보
       </Link>
       <Link
         href="/mypage/recycle"
-        className={classNames({ on: urlPath.startsWith('/mypage/recycle') })}
+        className={classNames({ on: urlPath === '/mypage/recycle' })}
       >
         분리수거 결과 보기
       </Link>
-    </StyledAside>
+    </MyPageSide>
   )
 }
+
+
 
 export default React.memo(Side)

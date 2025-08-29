@@ -1,56 +1,21 @@
 'use client'
 
-import React, { useActionState, useState, useCallback, useEffect } from 'react'
-import { getLoggedMember, processProfile } from '../_services/actions'
-import ProfileForm from '../_components/ProfileForm'
+import React from 'react'
+import useUser from '@/app/_global/hooks/useUser'
+import MypageForm from '../_components/MypageForm'
 
-type FormType = {
-  email: string
-  password: string
-  confirmPassword: string
-  name: string
-  mobile: string
-}
+const ProfileContainer = () => {
+  const { loggedMember } = useUser()
 
-const MyPageContainer = () => {
-  const [errors, action, pending] = useActionState<any, any>(processProfile, {})
-  const [form, setForm] = useState<FormType>({
-    email: '',
-    password: '',
-    confirmPassword: '',
-    name: '',
-    mobile: '',
-  })
-
-  useEffect(() => {
-    ;(async () => {
-      const member = await getLoggedMember()
-      if (member) {
-        setForm({
-          email: member.email ?? '',
-          name: member.name ?? '',
-          mobile: member.mobile ?? '',
-          password: '',
-          confirmPassword: '',
-        })
-      }
-    })()
-  }, [])
-
-  const onChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
-    setForm((prev) => ({ ...prev, [name]: value }))
-  }, [])
+  if (!loggedMember) {
+    return <p>로그인된 회원 정보가 없습니다.</p>
+  }
 
   return (
-    <ProfileForm
-      form={form}
-      errors={errors}
-      pending={pending}
-      action={action}
-      onChange={onChange}
+    <MypageForm
+      form={loggedMember}
     />
   )
 }
 
-export default React.memo(MyPageContainer)
+export default React.memo(ProfileContainer)

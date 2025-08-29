@@ -26,7 +26,7 @@ export default function useBoardConfig(bid?: string) {
   useEffect(() => {
     if (!bid) return
     ;(async () => {
-      const res = await fetchSSR(`/board/config/${bid}`)
+      const res = await fetchSSR(`admin/board/update/{bid}`)
       if (res.status !== 200) {
         return
       }

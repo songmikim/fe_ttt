@@ -1,5 +1,5 @@
 const fontsize = {
-  finy: '0.65rem',
+  tiny: '0.65rem',
   small: '0.85rem',
   normal: '1rem',
   medium: '1.25rem',

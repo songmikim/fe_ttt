@@ -17,8 +17,7 @@ const ResultWrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 20px;
-  margin-top: 80px;
+  margin-top:30px;
 `
 
 const ResultNav = styled.div`
@@ -38,8 +37,7 @@ const GuideNav = styled.div`
 `
 
 const ArrowButton = styled(Button)`
-  width: 40px;
-  height: 40px;
+  width: 60px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -50,6 +48,14 @@ const ArrowButton = styled(Button)`
     color: ${dark};
     font-size: 100px;
   }
+`
+
+const ButtonWrapper = styled.div`
+  width: 100%;
+  max-width: 870px;
+  display: flex;
+  justify-content: flex-end; /* 오른쪽 정렬 */
+  margin-top: 12px;
 `
 /* 스타일 정리 E */
 
@@ -72,6 +78,7 @@ export default function ResultContainer() {
   const [data, setData] = useState<ListData | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<unknown>(null)
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
 
   const searchParams = useSearchParams()
   const gid = searchParams.get('gid')
@@ -85,10 +92,9 @@ export default function ResultContainer() {
         setLoading(true)
         setError(null)
 
-        const res = await fetch(
-          `${BASE_URL}/recycle/result?gid=${gid}`, // 서버 limit은 무시
-          { cache: 'no-store' },
-        )
+        const res = await fetch(`${BASE_URL}/recycle/result?gid=${gid}`, {
+          cache: 'no-store',
+        })
         if (!res.ok) throw new Error(`HTTP ${res.status}`)
         const json: ListData = await res.json()
         if (alive) setData(json)
@@ -115,13 +121,22 @@ export default function ResultContainer() {
       images = JSON.parse(item.imageUrl || '[]')
     } catch {}
 
+    console.log(images)
+
     return images.map((img, idx) => ({
       key: `${item.seq}-${idx}`,
       category: categories[idx]?.category2 ?? '',
+      categoryKey: categories[idx]?.category1 ?? '',
       url: img.url,
       name: img.name,
     }))
   })
+
+  useEffect(() => {
+    if (flatImages.length > 0 && !selectedCategory) {
+      setSelectedCategory(flatImages[0].categoryKey)
+    }
+  }, [flatImages, selectedCategory])
 
   // 이미지 기준 페이지네이션
   const start = (page - 1) * LIMIT
@@ -146,7 +161,10 @@ export default function ResultContainer() {
             <BiLeftArrow />
           </ArrowButton>
 
-          <ResultComponents items={pageImages} />
+          <ResultComponents
+            items={pageImages}
+            onSelect={(cat) => setSelectedCategory(cat)}
+          />
 
           <ArrowButton
             onClick={() => setPage((p) => p + 1)}
@@ -155,13 +173,19 @@ export default function ResultContainer() {
             <BiRightArrow />
           </ArrowButton>
         </ResultNav>
-        <Link href="/recycle/detect">
-          <Button>다시 찍기</Button>
-        </Link>
+
+        <ButtonWrapper>
+          <Link href="/recycle">
+            <Button>다시 찍기</Button>
+          </Link>
+        </ButtonWrapper>
       </ResultWrapper>
 
       <GuideNav>
-        <RecycleGuide items={data?.items ?? []} />
+        <RecycleGuide
+          items={data?.items ?? []}
+          selectedCategory={selectedCategory}
+        />
       </GuideNav>
     </>
   )

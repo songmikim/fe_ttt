@@ -42,15 +42,27 @@ export async function GET(request: NextRequest) {
 
     if (res.status === 200) {
       // 로그인 처리
-      const token = await res.text()
+      const data = await res.json()
       const cookie = await cookies()
-      cookie.set('token', token, {
+      cookie.set('token', data.token, {
         httpOnly: true,
         path: '/',
       })
     } else {
-      // 회원이 존재하지 않는 경우, 소셜 가입을 진행
-      redirectUrl = `/member/join?channel=${channel}&token=${id}`
+      const json = await res.json()
+
+      if (json.messages) {
+        const cookie = await cookies()
+        cookie.set('login_error', JSON.stringify(json.messages), {
+          httpOnly: false, // 클라에서 읽어야 하므로 false
+          path: '/',
+          maxAge: 5, // 5초만 유지
+        })
+        redirect(`/member/login?redirectUrl=${redirectUrl}`)
+      } else {
+        // 회원이 존재하지 않는 경우, 소셜 가입을 진행
+        redirectUrl = `/member/join?channel=${channel}&token=${id}`
+      }
     }
   } catch (err) {
     console.error(err)

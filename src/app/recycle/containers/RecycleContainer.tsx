@@ -51,7 +51,7 @@ const RecycleContainer = () => {
     startTransition(async () => {
       await processRecycle()
     })
-  }, [cookies.guestCount, router, setCookie])
+  }, [cookies.guestCount, router, setCookie, loggedMember])
 
   return <p>{pending ? '이동 중…' : '준비 중…'}</p>
 }

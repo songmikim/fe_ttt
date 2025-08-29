@@ -7,6 +7,8 @@ import React, {
   useEffect,
   useMemo,
 } from 'react'
+import styled from 'styled-components'
+import color from '@/app/_global/styles/color'
 import { useSearchParams } from 'next/navigation'
 import { processLogin } from '../_services/actions'
 import LoginForm from '../_components/LoginForm'
@@ -21,10 +23,39 @@ type FormType = {
   redirectUrl?: string
 }
 
+const { naverGreen } = color
+
+const ButtonGroup = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+`
+
+const NaverButton = styled.a`
+  display: flex;
+  justify-content: center;
+  align-items: flex-start; /* 이미지를 위로 붙임 */
+  background-color: ${naverGreen}; /* 네이버 초록색 */
+  width: 400px;
+  height: 60px;
+  border-radius: 8px;
+`
+
 const kakaoApi = new KakaoApi()
 const naverApi = new NaverApi()
-const LoginContainer = ({ redirectUrl }: { redirectUrl?: string }) => {
-  const [errors, action, pending] = useActionState<any, any>(processLogin, {})
+const LoginContainer = ({
+  redirectUrl,
+  errors: initialErrors = {},
+}: {
+  redirectUrl?: string
+  errors?: any
+}) => {
+  const [errors, action, pending] = useActionState<any, any>(
+    processLogin,
+    initialErrors,
+  )
   const [form, setForm] = useState<FormType>({
     email: '',
     password: '',
@@ -63,17 +94,24 @@ const LoginContainer = ({ redirectUrl }: { redirectUrl?: string }) => {
         form={form}
         onChange={onChange}
       />
-      <a href={kakaoLoginUrl}>
-        <Image src={kakaoLoginButton} alt="카카오 로그인" width={400} />
-      </a>
-      <a href={naverLoginUrl}>
-        <Image
-          src={naverLoginButton}
-          alt="네이버 로그인"
-          width={400}
-          height={60}
-        />
-      </a>
+      <ButtonGroup>
+        <a href={kakaoLoginUrl}>
+          <Image
+            src={kakaoLoginButton}
+            alt="카카오 로그인"
+            width={400}
+            height={60}
+          />
+        </a>
+        <NaverButton href={naverLoginUrl}>
+          <Image
+            src={naverLoginButton}
+            alt="네이버 로그인"
+            width={400}
+            height={60}
+          />
+        </NaverButton>
+      </ButtonGroup>
     </>
   )
 }

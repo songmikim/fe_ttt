@@ -4,8 +4,8 @@ import JoinContainer from '../_containers/JoinContainer'
 
 export default function JoinPage() {
   return (
-    <ContentBox width={420}>
-      <MainTitle center="true">회원가입</MainTitle>
+    <ContentBox width={800}>
+      <MainTitle border="true">회원가입</MainTitle>
       <JoinContainer />
     </ContentBox>
   )

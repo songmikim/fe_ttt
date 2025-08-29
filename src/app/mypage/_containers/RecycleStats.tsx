@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react'
 import { Pie } from 'react-chartjs-2'
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js'
+import useFetchCSR from '@/app/_global/hooks/useFetchCSR'
 
 ChartJS.register(ArcElement, Tooltip, Legend)
 
@@ -17,16 +18,20 @@ export default function RecycleStats() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
+  const { fetchCSR, ready } = useFetchCSR()
+
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true)
       try {
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/mypage/recycle/files`,
-          { cache: 'no-store' },
-        )
-        if (!res.ok) throw new Error('데이터 조회 실패')
-        const data = await res.json()
-        setItems(data.items || [])
+        if (!ready) return
+        fetchCSR(`/recycle/my-data`, {
+          method: 'GET',
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            setItems(data.items || [])
+          })
       } catch (err: any) {
         setError(err.message)
       } finally {
@@ -34,7 +39,7 @@ export default function RecycleStats() {
       }
     }
     fetchData()
-  }, [])
+  }, [ready]) // fetchCSR 넣으면 안 됨.
 
   if (loading) return <p>로딩중...</p>
   if (error) return <p style={{ color: 'red' }}>{error}</p>
@@ -56,6 +61,8 @@ export default function RecycleStats() {
       if (typeof parsed === 'string') {
         parsed = JSON.parse(parsed)
       }
+
+      console.log('parsed', parsed)
 
       if (Array.isArray(parsed)) {
         parsed.forEach((obj) => {
