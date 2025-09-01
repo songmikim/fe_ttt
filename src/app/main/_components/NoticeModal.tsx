@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react'
 import Image from 'next/image'
 import styled from 'styled-components'
-import { format } from 'date-fns'
+import { format, formatISO} from 'date-fns'
 import LayerPopup from '../../_global/components/LayerPopup'
 import type { BoardDataType } from '@/app/board/_types/BoardType'
 import guideImg from '@/app/_global/assets/images/guide.png'
@@ -44,7 +44,6 @@ const ImageWrapper = styled.div`
   position: relative;
   display: inline-block; 
   width: 500px;
-  z-index:-1;
 `
 
 const OverlayTexts = styled.div`
@@ -122,7 +121,7 @@ const NoticeModal = ({ items }: Props) => {
             <li key={item.seq}>
               <a href={`/board/view/${item.seq}`}>{item.subject}</a>
               {item.createdAt && (
-                <time dateTime={item.createdAt.toISOString()}>
+                <time dateTime={formatISO(item.createdAt)}>
                   {format(item.createdAt, 'yyyy.MM.dd')}
                 </time>
               )}

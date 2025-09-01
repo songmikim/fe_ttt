@@ -96,8 +96,8 @@ export default function RecycleStats() {
   }
 
   return (
-    <div style={{ marginTop: '40px' }}>
-      <h2> 분리수거 통계</h2>
+    <div style={{ marginTop: '20px' }}>
+      <h2 style={{ fontSize: '2rem', fontWeight: 600 }}>내 분리수거 통계</h2>
       <p>총 분리수거 횟수: {totalCount}회</p>
 
       <div style={{ width: '400px', margin: '20px auto' }}>

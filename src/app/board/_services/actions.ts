@@ -57,15 +57,7 @@ export async function processUpdate(errors: any, formData: FormData) {
   })
   console.log(res)
 
-const data = await res.json()
-  let redirectUrl = `/board/list/${board.bid}`
-  if ([200, 201].includes(res.status)) {
-    // 게시글 등록, 수정 성공
-    const { afterWritingRedirect } = board
-    redirectUrl = afterWritingRedirect ? `/board/view/${data.seq}` : redirectUrl
-  } else {
-    return data.messages
-  }
+  const redirectUrl = `/board/list/${board.bid}`
 
   redirect(redirectUrl)
 }
@@ -80,12 +72,10 @@ export async function processPassword(errors: any, formData: FormData) {
   errors = {}
   const params = toPlainObj(formData)
   let hasErrors: boolean = false
-  const { seq, mode, password } = params
-  if (
-    !seq ||
-    !mode ||
-    !['update', 'delete', 'comment_update', 'comment_delete'].includes(mode)
-  ) {
+  const { seq, mode, password, bid } = params // bid 추가
+  
+  // 유효성 검사
+  if (!seq || !mode || !['update', 'delete', 'comment_update', 'comment_delete'].includes(mode)) {
     errors.global = '잘못된 접근입니다.'
     hasErrors = true
   }
@@ -99,6 +89,7 @@ export async function processPassword(errors: any, formData: FormData) {
     return errors
   }
 
+  // 비밀번호 확인 API 호출
   const requestUrl = mode.startsWith('comment_')
     ? `/board/password/comment/${seq}`
     : `/board/password/${seq}`
@@ -108,29 +99,98 @@ export async function processPassword(errors: any, formData: FormData) {
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ password }),  // ✅ password만 전송
+    body: JSON.stringify({ password }),
   })
-  console.log("res",res)
 
   if (res.status !== 204) {
-    // 비회원 비밀번호 인증 실패
     const data = await res.json()
     return { password: data.messages }
   }
-  console.log("피카츄")
 
-  let redirectUrl: string = '/board/'
-  switch (mode) {
-    case 'delete':
-      redirectUrl += `delete/${seq}`
-      break
-    case 'comment_delete':
-    case 'comment_update':
-      break
-    default:
-      redirectUrl += `update/${seq}`
+  // 성공 시 mode에 따른 처리
+  if (mode === 'update') {
+    redirect(`/board/update/${seq}`)
+  } else if (mode === 'delete') {
+    // 바로 삭제 처리
+    try {
+      const deleteRes = await fetchSSR(`/board/delete/${seq}`, {
+      method: 'DELETE',
+      })
+
+    const responseText = await deleteRes.text()
+    const result = responseText ? JSON.parse(responseText) : {}
+    } catch (error) {
+      console.error("삭제 에러:", error)
+      return { global: '삭제 중 오류가 발생했습니다.' }
+      throw error
+    }
+    
+    redirect(`/board/list/${bid}`)
+  }  else if (mode.startsWith('comment_')) {
+    // 댓글 관련 처리
+    redirect(`/board/view/${seq}`)
   }
-  console.log("redirectUrl",redirectUrl)
+}
 
-  redirect(redirectUrl)
+export async function processComment(errors: any, formData: FormData) {
+  errors = {}
+  const params = toPlainObj(formData)
+  let hasErrors: boolean = false
+
+  // 유효성 검사
+  const { seq, boardDataSeq, commenter, content, mode, guest, guestPw } = params
+  if (!boardDataSeq || !mode || (mode === 'comment_update' && !seq)) {
+    errors.global = '잘못된 접근입니다.'
+    hasErrors = true
+  }
+
+  if (!commenter?.trim()) {
+    errors.commenter = '작성자를 입력하세요.'
+    hasErrors = true
+  }
+
+  if (!content?.trim()) {
+    errors.content = '댓글을 입력하세요.'
+    hasErrors = true
+  }
+
+  if (guest && !guestPw?.trim()) {
+    errors.guestPw = '비밀번호를 입력하세요.'
+    hasErrors = true
+  }
+
+  if (hasErrors) {
+    return errors
+  }
+
+  const res = await fetchSSR(`/comment/comment/${params.boardDataSeq}`, {
+    method: mode === 'comment_update' ? 'PATCH' : 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(params),
+  })
+
+  if (res.status === 204) {
+    // 성공 - 본문 없음
+    redirect(`/board/view/${params.boardDataSeq}`)
+    return
+  }
+
+  // 에러인 경우에만 JSON 파싱
+  if (res.status >= 400) {
+    const data = await res.json()
+    return data.messages
+  }
+}
+
+export async function processDelete(seq, bid) {
+  // 삭제 로직
+  const deleteRes = await fetchSSR(`/board/delete/${seq}`, {
+    method: 'DELETE',
+  })
+
+  if (deleteRes.status === 200) {
+    redirect(`/board/list/${bid}`)
+  }
 }

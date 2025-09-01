@@ -11,10 +11,12 @@ type FileType = {
   single?: boolean
   imageOnly?: boolean
   callback?: (items: Array<any>) => void
+  title?: string
+  icon?: any
 }
 
-const FileBox = ({ gid, location, single, imageOnly, callback }: FileType) => {
-  const { fetchCSR, ready } = useFetchCSR()
+const FileBox = ({ gid, location, single, imageOnly, callback, title, icon }: FileType) => {
+  const { fetchCSR } = useFetchCSR()
   const alertDialog = useAlertDialog()
 
   const onUploadClick = useCallback(() => {
@@ -73,7 +75,6 @@ const FileBox = ({ gid, location, single, imageOnly, callback }: FileType) => {
         formData.append('file', file)
       }
 
-      if (!ready) return
       fetchCSR('/file/upload', {
         method: 'POST',
         body: formData,
@@ -85,12 +86,12 @@ const FileBox = ({ gid, location, single, imageOnly, callback }: FileType) => {
           }
         })
     }
-  }, [fetchCSR, ready, gid, location, imageOnly, single, callback, alertDialog])
+  }, [fetchCSR, gid, location, imageOnly, single, callback, alertDialog])
 
   return (
     <>
       <Button type="button" onClick={onUploadClick} width={150}>
-        <MdFileUpload /> 파일 업로드
+        {icon ? icon : <MdFileUpload />} {title ? title : '파일 업로드'}
       </Button>
     </>
   )

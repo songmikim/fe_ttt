@@ -18,8 +18,6 @@ export type BoardConfigType = {
   imageUpload: boolean
   attachFile: boolean
   comment: boolean
-  afterWritingRedirect: boolean
-  showViewList: boolean
   listAuthority: AuthorityType
   viewAuthority: AuthorityType
   writeAuthority: AuthorityType
@@ -64,6 +62,7 @@ export type BoardDataType = {
   canEdit?: boolean
   canDelete?: boolean
   needAuth?: boolean
+  commentable: boolean
   mine?: boolean
   viewCount?: number
   ip?: string

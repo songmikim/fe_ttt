@@ -19,6 +19,78 @@ const StyledForm = styled.form`
   .message {
     margin-bottom: 10px;
   }
+
+  /* 비밀번호 보기/숨기기 버튼 & 메일/확인 버튼 스타일 */
+  .password-wrapper {
+    position: relative;
+    margin-bottom: 10px;
+
+    input {
+      width: 100%;
+    }
+
+    button {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: #fff;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 4px 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+      transition: all 0.2s;
+
+      &:hover {
+        background: #f5f5f5;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      }
+    }
+  }
+  /* 이메일 전송/인증 버튼 스타일 */
+  .email-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    input {
+      flex: 1;
+    }
+
+    button {
+      background: #fff; /* 비밀번호 버튼 스타일 재사용 */
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 4px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+      transition: all 0.2s;
+
+      &:hover {
+        background: #f5f5f5;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      }
+
+      &:disabled {
+        cursor: not-allowed;
+        opacity: 0.6;
+        box-shadow: none;
+      }
+    }
+  }
+
+  .profile-images img {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+  }
 `
 const TermsAgree = styled.div`
   display: flex;
@@ -151,7 +223,7 @@ const JoinForm = ({
 
       {(!form?.socialChannel || !form?.socialToken) && (
         <>
-          <div>
+          <div className="password-wrapper">
             <Input
               type={showPassword ? 'text' : 'password'}
               name="password"
@@ -174,7 +246,7 @@ const JoinForm = ({
             </button>
           </div>
           <MessageBox color="danger">{errors?.password}</MessageBox>
-          <div>
+          <div className="password-wrapper">
             <Input
               type={showconfirmPassword ? 'text' : 'password'}
               name="confirmPassword"
@@ -220,11 +292,13 @@ const JoinForm = ({
 
       <h3>프로필 이미지</h3>
 
+      <div className="profile-images">
       <FileImages
         items={form.profileImage}
         callback={fileDeleteCallback}
         viewOrgImage={true}
       />
+      </div>
       <FileUpload
         gid={form.gid}
         imageOnly={true}

@@ -16,31 +16,36 @@ const StyledForm = styled.form`
     color: #777;
     text-align: center;
   }
-`
-const LoginButton = styled(SubmitButton)`
-  width: 800px;
-  margin: 10px auto;
-  display: block;
-  //margin-bottom: 4px;
-  background-color: #ffffff;
-  color: #333333;
-  border: 2.4px solid #333333;
-  font-size: 18px;
-  font-weight: bold;
-  padding: 12px;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.2s ease;
 
-  &:hover {
-    border-color: #4caf50;
-    color: #4caf50;
+    /* 비밀번호 보기/숨기기 버튼 스타일 */
+  .password-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+
+    button {
+      position: absolute;
+      right: 10px;
+      background: #fff;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 4px 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+      transition: all 0.2s;
+
+      &:hover {
+        background: #f5f5f5; 
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); 
+      }
+    }
   }
 
-  &:disabled {
-    background-color: #e0e0e0;
-    color: #888;
-    cursor: not-allowed;
+  .password-input {
+    width: 100%;
   }
 `
 
@@ -57,13 +62,14 @@ const LoginForm = ({ errors, action, pending, form, onChange }) => {
         onChange={onChange}
       />
       <MessageBox color="danger">{errors?.email}</MessageBox>
-      <div>
+      <div className="password-wrapper">
         <Input
           type={showpassword ? 'text' : 'password'}
           name="password"
           placeholder="비밀번호를 입력하세요."
           value={form.password}
           onChange={onChange}
+          className='password-input'
         />
         <button
           type="button"
@@ -84,7 +90,7 @@ const LoginForm = ({ errors, action, pending, form, onChange }) => {
 
       <MessageBox color="danger">{errors?.global}</MessageBox>
 
-      <LoginButton type="submit">로그인</LoginButton>
+      <SubmitButton type="submit">로그인</SubmitButton>
       <h4>간편 로그인</h4>
     </StyledForm>
   )

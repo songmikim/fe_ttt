@@ -51,14 +51,20 @@ export async function GET(request: NextRequest) {
     } else {
       const json = await res.json()
 
-      if (json.messages) {
+      console.log('메시지', json.messages)
+
+      if (
+        json.messages &&
+        Array.isArray(json.messages.global) &&
+        json.messages.global.includes('탈퇴 진행 중인 계정입니다.')
+      ) {
         const cookie = await cookies()
         cookie.set('login_error', JSON.stringify(json.messages), {
           httpOnly: false, // 클라에서 읽어야 하므로 false
           path: '/',
           maxAge: 5, // 5초만 유지
         })
-        redirect(`/member/login?redirectUrl=${redirectUrl}`)
+        redirectUrl = `/member/login?redirectUrl=${redirectUrl}`
       } else {
         // 회원이 존재하지 않는 경우, 소셜 가입을 진행
         redirectUrl = `/member/join?channel=${channel}&token=${id}`
@@ -66,7 +72,7 @@ export async function GET(request: NextRequest) {
     }
   } catch (err) {
     console.error(err)
-    redirect(`/member/login?redirectUrl=${redirectUrl}`)
+    redirectUrl = `/member/login?redirectUrl=${redirectUrl}`
   }
 
   return NextResponse.redirect(

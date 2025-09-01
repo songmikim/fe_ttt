@@ -1,6 +1,6 @@
 'use client'
 import styled from 'styled-components'
-import bgImg from '@/app/_global/assets/images/main.jpg'
+import bgImg from '@/app/_global/assets/images/main5.png'
 import { Button } from '@/app/_global/components/Buttons'
 
 export const PageWrapper = styled.div`
@@ -35,22 +35,55 @@ export const Counter = styled.div`
 export const SubText = styled.div`
   font-size: 32px;
   color: rgba(255, 255, 255, 0.85);
-  text-shadow: 1px 1px 4px rgba(0,0,0,0.2);
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
 `
 
 export const StyledButton = styled(Button)`
-  font-size: 26px;
-  border-radius: 16px;
+  font-size: 30px;
+  border-radius: 50px;
   width: 240px;
-  height: 60px;
+  height: 80px;
   padding: 0;
-  font-weight: 500;
-  color: #000;
-  background-color: rgba(255, 255, 255, 0.7);
-  transition: transform 0.2s, box-shadow 0.2s;
+  font-weight: bold;
+  font-family: 'Helvetica Rounded Bold', sans-serif;
+  background: linear-gradient(
+    to bottom,
+    rgba(240, 150, 90, 1),
+    rgba(218, 120, 60, 1)
+  );
+  color: rgba(248, 238, 199, 0.95);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  margin-top: 18px;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -75%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(
+      120deg,
+      rgba(255, 255, 255, 0.6) 0%,
+      rgba(255, 255, 255, 0.1) 60%
+    );
+    transform: skewX(-25deg);
+  }
+
+  &:hover::before {
+    left: 125%;
+    transition: left 0.7s ease;
+  }
 
   &:hover {
     transform: translateY(-3px);
+    background: linear-gradient(
+      to bottom,
+      rgba(250, 170, 110, 1),
+      rgba(230, 140, 80, 1)
+    );
     box-shadow: 0 8px 18px rgba(0, 0, 0, 0.35);
   }
 `

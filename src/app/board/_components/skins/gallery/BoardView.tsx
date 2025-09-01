@@ -51,7 +51,7 @@ const BoardView = ({ board, data }: BoardViewType) => {
         <div className="links">
           {board?.listable && <a href={'/board/list/' + board.bid}>글목록</a>}
           {data.canDelete && (
-            <a href={'/board/delete/' + data.seq}>글삭제</a>
+            <a href={'/board/list/' + data.bid}>글삭제</a>
           )}
           {data.canDelete && (
             <a href={'/board/update/' + data.seq}>글수정</a>

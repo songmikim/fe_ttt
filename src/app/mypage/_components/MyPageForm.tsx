@@ -5,6 +5,7 @@ import styled from 'styled-components'
 import FileImages from '@/app/_global/components/FileImages'
 
 const StyledProfileView = styled.div`
+
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -12,8 +13,12 @@ const StyledProfileView = styled.div`
   dl {
     margin: 0;
     display: flex;
-    flex-direction: column;
-    gap: 5px;
+    align-items: center;
+    gap: 15px;
+    padding: 12px 16px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background: #fafafa;
 
     dt {
       font-weight: bold;
@@ -25,6 +30,19 @@ const StyledProfileView = styled.div`
       margin: 0;
       font-size: 15px;
       color: #555;
+    }
+    &.profile {
+      border: none;
+      background: none;
+      justify-content: center;
+      padding: 0;
+
+      dd img {
+        width: 250px;
+        height: 250px;
+        border-radius: 10%;
+        object-fit: cover;
+      }
     }
   }
 `
@@ -40,15 +58,15 @@ type Props = {
 
 const MypageForm = ({ form }: Props) => {
   return (
-    <StyledProfileView>
-      <dl>
-        <dt>프로필 사진</dt>
+   <StyledProfileView>
+      <dl className="profile">
         <dd>
           <FileImages
             items={form.profileImage}
             width={250}
             height={250}
             viewOrgImage={true}
+            viewOnly={true} // 파일 삭제 버튼 숨김
           />
         </dd>
       </dl>
@@ -67,6 +85,7 @@ const MypageForm = ({ form }: Props) => {
         <dt>휴대전화번호</dt>
         <dd>{form.mobile}</dd>
       </dl>
+      <hr style={{ margin: '20px 0', border: '1px solid #ccc' }} />
     </StyledProfileView>
   )
 }

@@ -79,7 +79,7 @@ export function nl2br(str: string) {
   return str.replace(/\r/g, '').replace(/\n/g, '<br />')
 }
 
-export async function toQueryString(search) {
+export function toQueryString(search) {
   if (!search) return ''
 
   const qs: Array<string> = []

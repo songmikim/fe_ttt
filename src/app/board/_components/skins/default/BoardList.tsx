@@ -3,6 +3,9 @@ import type { BoardListType } from '@/app/board/_types/BoardType'
 import BoardListItems from './BoardListItems'
 import BoardSearchForm from './BoardSearchForm'
 import BoardCategory from './BoardCategory'
+import { Button } from '@/app/_global/components/Buttons'
+
+
 const BoardList = ({ board, items, search }: BoardListType) => {
   return (
     <>

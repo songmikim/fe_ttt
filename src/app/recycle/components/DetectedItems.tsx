@@ -3,13 +3,14 @@ import { color } from '../libs'
 
 const StyledItem = styled.li<{ category?: string }>`
   border: 3px solid #000;
+
   ${({ category }) =>
     category &&
     css`
       border-color: ${color[category] ?? '#000'};
       .category {
         background: ${color[category] ?? '#000'};
-        color: #fff;
+        color: ${category == '비닐' ? '#000' : '#fff'};
       }
     `}
 `
@@ -17,10 +18,13 @@ const StyledItem = styled.li<{ category?: string }>`
 const StyledItems = styled.ul`
   display: flex;
   flex-wrap: wrap;
+  width: 640px;
 
   li {
     width: 100px;
     height: 100px;
+
+    margin: 20px auto;
 
     position: relative;
 

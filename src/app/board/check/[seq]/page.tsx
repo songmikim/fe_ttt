@@ -1,22 +1,20 @@
 import { get } from '../../_services/BoardData'
-import UpdateContainer from '../../_containers/UpdateContainer'
 import ContentBox from '@/app/_global/components/ContentBox'
 import { MainTitle } from '@/app/_global/components/TitleBox'
+import PasswordContainer from '../../_containers/PasswordContainer'
 
-export default async function UpdatePage({
+export default async function CheckPage({
   params,
 }: {
   params: Promise<{ seq: number }>
 }) {
   const { seq } = await params
   const data = await get(seq)
-  const { board } = data
 
   return (
-    
     <ContentBox>
       <MainTitle border="true">{data?.subject}</MainTitle>
-      <UpdateContainer board={board} data={data} />
+      <PasswordContainer seq={data?.seq} bid={data?.bid} />
     </ContentBox>
   )
 }

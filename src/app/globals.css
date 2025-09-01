@@ -1,9 +1,20 @@
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Mansalva&family=Noto+Sans+KR:wght@100..900&display=swap');
 
 * {
   box-sizing: border-box;
   outline: none;
-  font-family: 'Noto Sans KR', sans-serif;
+  /* font-family: 'Noto Sans KR', sans-serif; */
+}
+
+.box-font {
+  font-family: 'Mansalva', cursive;
+}
+
+.fixed-font {
+  font-family: "Marcellus SC", serif;
+  font-weight: 400;
+  font-style: normal;
 }
 
 html {

@@ -5,6 +5,7 @@ import DetectedItems from '../components/DetectedItems'
 import { Button } from '@/app/_global/components/Buttons'
 import { processDetectData } from '../_services/actions'
 import { useRouter } from 'next/navigation'
+import ContentBox from '@/app/_global/components/ContentBox'
 
 const DetectContainer = () => {
   const [items, setItems] = useState<any>([])
@@ -39,7 +40,7 @@ const DetectContainer = () => {
   }, [items, router])
 
   return (
-    <>
+    <ContentBox width={640}>
       <DetectObject width={640} height={640} callback={callback} />
       <DetectedItems items={items} />
       {items.length > 0 && (
@@ -47,7 +48,7 @@ const DetectContainer = () => {
           저장하기
         </Button>
       )}
-    </>
+    </ContentBox>
   )
 }
 

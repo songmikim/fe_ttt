@@ -6,6 +6,7 @@ import type { BoardViewType } from '@/app/board/_types/BoardType'
 import { nl2br } from '@/app/_global/libs/commons'
 import FileItems from '@/app/_global/components/FileItems'
 import color from '@/app/_global/styles/color'
+import { processDelete }  from '../../../_services/actions'
 import fontsize from '../../../../_global/styles/fontsize'
 
 const { danger, info, white } = color
@@ -133,13 +134,20 @@ const BoardView = ({ board, data }: BoardViewType) => {
         </Wrapper>
         <FileItems items={data.attachFiles} />
         <StyledLinks>
-          {data.canEdit && (
-            <a href={'/board/delete/' + data.seq} className="btn2">
+          {data.canDelete && (
+            <a 
+              href={data.needAuth ? `/board/check/${data.seq}?mode=delete` : `/board/delete/${data.seq}`}
+              className="btn2"
+            >
               글삭제
             </a>
-            )}
-          {data.canDelete && (
-            <a href={'/board/update/' + data.seq} className="btn3">
+          )}
+
+          {data.canEdit && (
+            <a 
+              href={data.needAuth ? `/board/check/${data.seq}?mode=update` : `/board/update/${data.seq}`}
+              className="btn3"
+            >
               글수정
             </a>
           )}

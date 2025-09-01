@@ -58,6 +58,7 @@ const Article = styled.article`
     border-bottom: 1px solid #eee;
     background: #fafcff;
     margin: 0;
+    white-space: pre-line;
 
     img {
       position: relative !important;

@@ -47,6 +47,11 @@ const StyledHeader = styled.header`
   }
 `
 
+const HeaderButton = styled(Button)`
+  background: #ccc;
+  color: #000;
+`
+
 const Header = () => {
   const { loggedMember } = useUser()
 
@@ -62,14 +67,14 @@ const Header = () => {
       </div>
       <div className="right">
         <a href="/member/api/logout">
-          <Button type="button" color="secondary">
-            <FiLogOut />
+          <HeaderButton type="button">
+            <FiLogOut style={{ verticalAlign: 'middle', color: '#000' }} />
             로그아웃
-          </Button>
+          </HeaderButton>
         </a>
         <Link href="/" prefetch={false}>
           <Button type="button">
-            <FaExternalLinkAlt />
+            <FaExternalLinkAlt style={{ verticalAlign: 'middle' }} />
             사이트 메인
             <LinkLoading />
           </Button>

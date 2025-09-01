@@ -15,6 +15,23 @@ const StyledForm = styled.form`
   flex-direction: column;
   gap: 20px;
 
+  dl:last-of-type button {
+    background-color: #666;
+    color: #fff;
+    width: 250px;
+    justify-content: center;
+    padding: 8px 16px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
   dl {
     margin: 0;
   }

@@ -17,6 +17,11 @@ const StyledForm = styled.form`
     width: 250px;
   }
 
+  thead th {
+    background: #ccc;
+    color: #000;
+  }
+
   td {
     text-align: center;
   }
@@ -33,6 +38,11 @@ const StyledForm = styled.form`
     border-bottom: 1px solid #ccc;
     padding: 10px;
   }
+`
+
+const BoardButton = styled(Button)`
+  background: #ccc; /* 원하는 색상 */
+  color: #000;
 `
 
 const BoardItems = ({
@@ -77,9 +87,9 @@ const BoardItems = ({
                     <Button type="button">설정수정</Button>
                   </a>
                   <a href={'/board/list/' + bid} target="_blank">
-                    <Button type="button" color="info">
+                    <BoardButton type="button">
                       미리보기
-                    </Button>
+                    </BoardButton>
                   </a>
                 </td>
               </tr>
@@ -95,7 +105,7 @@ const BoardItems = ({
       </TableRows>
       {items && items.length > 0 && (
         <div className="table-action">
-          <Button type="button" color="warning" width={200} onClick={onRemove}>
+          <Button type="button" color="danger" width={200} onClick={onRemove}>
             선택한 게시판 삭제하기
           </Button>
         </div>

@@ -9,7 +9,6 @@ import React, {
 import { produce } from 'immer'
 import BoardForm from '../_components/BoardForm'
 import type { BoardConfigType, BoardDataType } from '../_types/BoardType'
-import CommonContainer from '../_wrappers/CommonContainer'
 import useUser from '@/app/_global/hooks/useUser'
 import { processUpdate } from '../_services/actions'
 
@@ -95,7 +94,6 @@ const UpdateContainer = ({
   }, [])
 
   return (
-    <CommonContainer board={board} data={data} mode={data.mode ?? ''}>
       <BoardForm
         board={board}
         data={_data}
@@ -108,7 +106,6 @@ const UpdateContainer = ({
         fileUploadCallback={fileUploadCallback}
         fileDeleteCallback={fileDeleteCallback}
       />
-    </CommonContainer>
   )
 }
 

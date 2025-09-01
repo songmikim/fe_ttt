@@ -107,7 +107,7 @@ const LoginContainer = ({
           <Image
             src={naverLoginButton}
             alt="네이버 로그인"
-            width={400}
+            width={260}
             height={60}
           />
         </NaverButton>

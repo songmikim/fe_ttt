@@ -3,6 +3,7 @@ import React from 'react'
 import styled from 'styled-components'
 import { Input, Textarea, TableCols } from '@/app/_global/components/Forms'
 import { Button } from '@/app/_global/components/Buttons'
+import MessageBox from '@/app/_global/components/MessageBox'
 import type { CrawlerConfigType } from '../_types'
 
 const Wrapper = styled.div`
@@ -20,6 +21,7 @@ type Props = {
   ) => void
   onRemove: (index: number) => void
   onTest: (index: number) => void
+  errors?: Record<string, string>
 }
 
 const CrawlerConfigForm = ({
@@ -28,6 +30,7 @@ const CrawlerConfigForm = ({
   onChange,
   onRemove,
   onTest,
+  errors = {},
 }: Props) => {
   return (
     <Wrapper>
@@ -41,6 +44,7 @@ const CrawlerConfigForm = ({
                 value={form.url}
                 onChange={(e) => onChange(index, e)}
               />
+              <MessageBox color="danger">{errors?.url}</MessageBox>
             </td>
           </tr>
           <tr>
@@ -62,6 +66,7 @@ const CrawlerConfigForm = ({
                 value={form.linkSelector}
                 onChange={(e) => onChange(index, e)}
               />
+              <MessageBox color="danger">{errors?.linkSelector}</MessageBox>
             </td>
           </tr>
           <tr>
@@ -72,6 +77,7 @@ const CrawlerConfigForm = ({
                 value={form.titleSelector}
                 onChange={(e) => onChange(index, e)}
               />
+              <MessageBox color="danger">{errors?.titleSelector}</MessageBox>
             </td>
           </tr>
           <tr>
@@ -82,6 +88,7 @@ const CrawlerConfigForm = ({
                 value={form.dateSelector}
                 onChange={(e) => onChange(index, e)}
               />
+              <MessageBox color="danger">{errors?.dateSelector}</MessageBox>
             </td>
           </tr>
           <tr>
@@ -92,6 +99,7 @@ const CrawlerConfigForm = ({
                 value={form.contentSelector}
                 onChange={(e) => onChange(index, e)}
               />
+              <MessageBox color="danger">{errors?.contentSelector}</MessageBox>
             </td>
           </tr>
           <tr>
@@ -102,6 +110,7 @@ const CrawlerConfigForm = ({
                 value={form.urlPrefix}
                 onChange={(e) => onChange(index, e)}
               />
+              <MessageBox color="danger">{errors?.urlPrefix}</MessageBox>
             </td>
           </tr>
           <tr>

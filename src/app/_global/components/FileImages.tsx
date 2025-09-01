@@ -57,6 +57,7 @@ const ImageItem = ({
 }) => {
   const { seq, fileUrl, thumbBaseUrl, fileName, image } = item
   const [open, setOpen] = useState<boolean>(false)
+  const { ready, fetchCSR: doFetchCSR } = useFetchCSR()
   const fetchCSR = useFetchCSR()
   const confirmDialog = useConfirmDialog()
   const onClose = useCallback(() => setOpen(false), [])
@@ -67,7 +68,8 @@ const ImageItem = ({
       confirmDialog({
         text: '정말 삭제하겠습니까?',
         confirmCallback: () => {
-          fetchCSR(`/file/delete/${seq}`, { method: 'DELETE' })
+          if (!ready) return
+          doFetchCSR(`/file/delete/${seq}`, { method: 'DELETE' })
             .then((res) => res.json())
             .then((item) => {
               //  삭제 후 후속처리

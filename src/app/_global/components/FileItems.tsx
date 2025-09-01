@@ -44,14 +44,14 @@ const StyledItems = styled.ul`
 `
 
 const FileItems = ({ items, callback }: FileType) => {
-  const fetchCSR = useFetchCSR()
+  const { ready, fetchCSR: doFetchCSR } = useFetchCSR()
   const confirmDialog = useConfirmDialog()
   const onRemove = useCallback(
     (seq) => {
       confirmDialog({
         text: '정말 삭제하겠습니까?',
         confirmCallback: () => {
-          fetchCSR(`/file/delete/${seq}`, { method: 'DELETE' })
+          doFetchCSR(`/file/delete/${seq}`, { method: 'DELETE' })
             .then((res) => res.json())
             .then((item) => {
               //  삭제 후 후속처리
@@ -62,7 +62,7 @@ const FileItems = ({ items, callback }: FileType) => {
         },
       })
     },
-    [fetchCSR, callback, confirmDialog],
+    [doFetchCSR, ready, callback, confirmDialog],
   )
 
   items = Array.isArray(items) ? items : items ? [items] : []

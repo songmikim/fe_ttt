@@ -12,6 +12,7 @@ const StyledFooter = styled.footer`
   font-size: 14px;
 
   margin-top: auto;
+  min-width: 820px;
 
   h2 {
     margin-bottom: 10px;

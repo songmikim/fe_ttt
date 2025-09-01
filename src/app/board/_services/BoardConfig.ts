@@ -16,8 +16,6 @@ export const defaultData: BoardConfigType = {
   imageUpload: false,
   attachFile: false,
   comment: false,
-  afterWritingRedirect: false,
-  showViewList: false,
   listAuthority: 'ALL',
   viewAuthority: 'ALL',
   writeAuthority: 'ALL',

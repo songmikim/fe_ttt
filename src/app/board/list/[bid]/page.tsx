@@ -5,7 +5,6 @@ import { getList } from '../../_services/BoardData'
 import type {
   BoardConfigType,
   BoardSearchType,
-  BoardListType,
 } from '../../_types/BoardType'
 import ListContainer from '../../_containers/ListContainer'
 export default async function ListPage({

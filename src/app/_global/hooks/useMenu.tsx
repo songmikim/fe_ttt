@@ -7,6 +7,5 @@ export default function useMenu() {
   let menuKey = paths.length > 1 ? `/${paths[1]}` : ''
   if (paths.length > 2) menuKey += `/${paths[2]}`
 
-  console.log(menus, menuKey)
   return menus[menuKey] ?? []
 }

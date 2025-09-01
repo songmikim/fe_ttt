@@ -16,6 +16,8 @@ const { light } = color
 const StyledHeader = styled.header`
   position: relative;
   background: ${light};
+
+  /* ---- main-header S ---- */
   &.main-header {
     position: fixed;
     top: 20px;
@@ -25,11 +27,34 @@ const StyledHeader = styled.header`
     width: auto;
     max-width: none;
 
-    background: rgba(288, 255, 255, 0.5);
-    //backdrop-filter: blur(2px);
+    background: rgba(150, 188, 72, 0.8);
+    color: #fff;
     border-radius: 12px;
     z-index: 1000;
+
+    .menu-right .menu-link button,
+    .menu-right .mypage-btn button,
+    .menu-right .logout-btn button,
+    .menu-right .admin-btn button {
+      color: #fff;
+      background-color: transparent;
+    }
+
+    .menu-left .badge {
+      color: #fff;
+    }
+
+    .menu-link a {
+      color: #fff;
+      &:hover {
+        background-color: #7da53c;
+        border-radius: 18px;
+        height: 36px;
+        color: #fff;
+      }
+    }
   }
+  /* ---- main-header E ---- */
 
   display: flex;
   align-items: center;
@@ -37,6 +62,7 @@ const StyledHeader = styled.header`
   flex-wrap: wrap;
   height: auto;
   padding: 10px 20px;
+  min-width: 820px;
 
   /* 왼쪽: 로고 + 환영 메시지 */
   .menu-left {
@@ -46,7 +72,7 @@ const StyledHeader = styled.header`
     flex-wrap: wrap;
 
     .headerLogo {
-      width: 120px;
+      width: 60px;
       height: auto;
       display: block;
     }
@@ -64,9 +90,9 @@ const StyledHeader = styled.header`
     display: flex;
     align-items: center;
     height: 50px;
-    min-width: 120px; /* 모든 버튼 일정 폭 */
+    min-width: 120px;
     text-align: center;
-    justify-content: center; /* flex 중앙 정렬 */
+    justify-content: center;
     font-weight: 500;
     font-size: 14px;
     color: #333;
@@ -189,8 +215,8 @@ const StyledSubMenu = styled.div<{ $isLogin: boolean; $isAdmin: boolean }>`
   .submenu-group {
     display: flex;
     min-width: 120px;
-    flex-direction: column; /* 위아래로 정렬 */
-    gap: 20px; /* 항목간 상하 간격 */
+    flex-direction: column;
+    gap: 20px;
     text-align: center;
   }
 
@@ -244,7 +270,7 @@ const Header = () => {
             }
             onMouseLeave={onMenuClose}
           >
-            <Link href={label === '게시판' ? '/board' : '/event'}>{label}</Link>
+            <Link href={label === '게시판' ? '/board/list/freetalk' : '/event'}>{label}</Link>
           </div>
         ))}
 
@@ -261,13 +287,13 @@ const Header = () => {
               </Link>
             </div>
             <a href="/member/api/logout" className="logout-btn">
-              <Button type="button" color="secondary">
+              <Button type="button">
                 로그아웃
               </Button>
             </a>
             {isAdmin && (
-              <a href="/admin" className="admin-btn">
-                <Button type="button" color="info">
+              <a href="/admin/board" className="admin-btn">
+                <Button type="button">
                   사이트 관리
                 </Button>
               </a>

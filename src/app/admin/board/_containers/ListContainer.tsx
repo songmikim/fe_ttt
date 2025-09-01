@@ -1,4 +1,5 @@
 'use client'
+import styled from 'styled-components'
 import React, { useCallback, useState } from 'react'
 import type { BoardConfigType } from '@/app/board/_types/BoardType'
 import Pagination from '@/app/_global/components/Pagination'
@@ -12,6 +13,10 @@ type PropType = {
   pagination?: any
   search?: any
 }
+
+const SearchWrapper = styled.div`
+  margin-bottom: 20px;
+`
 
 const ListContainer = ({ items, pagination, search }: PropType) => {
   const [_items, setItems] = useState<Array<BoardConfigType> | undefined>(items)
@@ -62,7 +67,9 @@ const ListContainer = ({ items, pagination, search }: PropType) => {
 
   return (
     <>
-      <BoardSearchForm search={search} />
+      <SearchWrapper>
+        <BoardSearchForm search={search} />
+      </SearchWrapper>
       <BoardItems
         items={_items}
         onToggle={onToggle}

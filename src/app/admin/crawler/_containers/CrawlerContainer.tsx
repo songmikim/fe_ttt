@@ -2,6 +2,7 @@
 import React, { useState, useCallback } from 'react'
 import { Button } from '@/app/_global/components/Buttons'
 import useConfirmDialog from '@/app/_global/hooks/useConfirmDialog'
+import useAlertDialog from '@/app/_global/hooks/useAlertDialog'
 import CrawlerConfigForm from '../_components/CrawlerConfigForm'
 import type { CrawlerConfigType } from '../_types'
 import {
@@ -26,12 +27,15 @@ const emptyForm: CrawlerConfigType = {
 }
 
 const CrawlerContainer = ({ initialConfigs, initialScheduler }: Props) => {
-  const [forms, setForms] = useState<CrawlerConfigType[]>(
-    initialConfigs.length ? initialConfigs : [emptyForm],
+  const initialForms = initialConfigs.length ? initialConfigs : [emptyForm]
+  const [forms, setForms] = useState<CrawlerConfigType[]>(initialForms)
+  const [errors, setErrors] = useState<Record<string, string>[]>(
+    initialForms.map(() => ({})),
   )
   const [scheduler, setScheduler] = useState(initialScheduler)
   const [saving, setSaving] = useState(false)
   const confirmDialog = useConfirmDialog()
+  const alertDialog = useAlertDialog()
 
   const onChange = useCallback(
     (
@@ -44,12 +48,20 @@ const CrawlerContainer = ({ initialConfigs, initialScheduler }: Props) => {
           i === index ? { ...form, [name]: value } : form,
         ),
       )
+      setErrors((prev) => {
+        const next = [...prev]
+        const formErrors = { ...next[index] }
+        delete formErrors[name]
+        next[index] = formErrors
+        return next
+      })
     },
     [],
   )
 
   const addForm = useCallback(() => {
     setForms((prev) => [...prev, { ...emptyForm }])
+    setErrors((prev) => [...prev, {}])
   }, [])
 
   const removeForm = useCallback(
@@ -58,6 +70,7 @@ const CrawlerContainer = ({ initialConfigs, initialScheduler }: Props) => {
         text: '정말 삭제하겠습니까?',
         confirmCallback: () => {
           setForms((prev) => prev.filter((_, i) => i !== index))
+          setErrors((prev) => prev.filter((_, i) => i !== index))
         },
       })
     },
@@ -68,24 +81,58 @@ const CrawlerContainer = ({ initialConfigs, initialScheduler }: Props) => {
     async (index: number) => {
       try {
         const result = await testCrawler(forms[index])
-        alert(result ? JSON.stringify(result, null, 2) : '테스트 실패')
+              if (result) {
+          alertDialog.success(JSON.stringify(result, null, 2))
+        } else {
+          alertDialog.error('테스트 실패')
+        }
       } catch (err) {
         console.error(err)
-        alert('테스트 실패')
+        alertDialog.error('테스트 실패')
       }
     },
     [forms],
   )
 
   const save = useCallback(async () => {
+        const requiredFields: Record<keyof CrawlerConfigType, string> = {
+      url: 'URL을 입력하세요.',
+      //keywords: '키워드를 입력하세요.',
+      linkSelector: '링크 선택자를 입력하세요.',
+      titleSelector: '제목 선택자를 입력하세요.',
+      dateSelector: '날짜 선택자를 입력하세요.',
+      contentSelector: '내용 선택자를 입력하세요.',
+      urlPrefix: 'URL Prefix를 입력하세요.',
+    }
+
+    const newErrors = forms.map(() => ({} as Record<string, string>))
+    let hasErrors = false
+
+    forms.forEach((form, idx) => {
+      for (const [field, message] of Object.entries(requiredFields)) {
+        const value = form[field as keyof CrawlerConfigType]
+        if (!value || (typeof value === 'string' && value.trim() === '')) {
+          newErrors[idx][field] = message
+          hasErrors = true
+        }
+      }
+    })
+
+    if (hasErrors) {
+      setErrors(newErrors)
+      return
+    }
+
+    setErrors(forms.map(() => ({})))
+
     setSaving(true)
     try {
       await saveCrawlerConfigs(forms)
-      alert('저장되었습니다.')
+      alertDialog.success('저장되었습니다.')
     } finally {
       setSaving(false)
     }
-  }, [forms])
+  }, [forms, alertDialog])
 
   const toggleScheduler = useCallback(async () => {
     const enabled = !scheduler
@@ -111,6 +158,7 @@ const CrawlerContainer = ({ initialConfigs, initialScheduler }: Props) => {
           onChange={onChange}
           onRemove={removeForm}
           onTest={onTest}
+          errors={errors[index]}
         />
       ))}
 
