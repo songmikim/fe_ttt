@@ -1,36 +1,78 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 크롤러 관리 & 환경 행사 프론트엔드
 
-## Getting Started
+Next.js 기반 프론트엔드로 두 개의 주요 페이지를 제공합니다.
 
-First, run the development server:
+- `/admin/crawler`: 크롤러 설정과 스케줄러를 제어하는 관리자 페이지
+- `/event`: 환경 행사를 열람하는 공개 페이지
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+아래에서는 각 페이지의 기능과 파일 구조를 설명합니다.
+
+## `/admin/crawler`
+
+관리자가 웹 크롤러 동작을 이벤트 기반으로 제어할 수 있는 화면입니다.
+
+### 주요 기능
+
+- **설정 관리**: 대상 URL, 키워드, CSS 선택자를 폼으로 입력하고 저장합니다.
+- **실시간 테스트**: 입력된 설정으로 `/crawler/test`에 요청하여 결과를 다이얼로그로 확인합니다.
+- **스케줄러 토글**: `/crawler/scheduler` 엔드포인트에 활성/비활성 이벤트를 전송하여 크롤링 작업을 제어합니다.
+
+### 이벤트 흐름
+
+1. **입력 이벤트** (`onChange`)
+   - 폼 필드를 수정하면 내부 상태가 갱신되고 즉시 검증 오류가 해제됩니다.
+2. **저장 이벤트** (`save`)
+   - 검증 후 `/crawler/configs`로 POST 요청을 전송하고, 성공 시 알림 이벤트가 발생합니다.
+3. **테스트 이벤트** (`onTest`)
+   - "테스트" 버튼 클릭 시 비동기 요청을 보내고 응답을 다이얼로그에 표시합니다.
+4. **스케줄러 이벤트** (`toggleScheduler`)
+   - 버튼 클릭으로 스케줄러의 활성화 상태를 전환합니다.
+
+### 디렉터리 구조
+
+```
+src/app/admin/crawler
+├── _components      # 폼 및 UI 컴포넌트
+├── _containers      # 상태 관리 및 이벤트 로직
+├── _services        # 서버 통신 함수(SSR fetch)
+├── _types.ts        # 크롤러 관련 타입 정의
+└── page.tsx         # 관리자 페이지 엔트리
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## `/event`
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+환경 관련 행사를 검색하고 세부 정보를 확인할 수 있는 페이지입니다.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 주요 기능
 
-## Learn More
+- **행사 목록**: 서버에서 환경 행사 데이터를 페치하여 리스트로 출력합니다.
+- **검색 & 페이지네이션**: 키워드와 날짜로 필터링하며 페이지 이동이 가능합니다.
+- **상세 보기**: `/event/[hash]` 경로에서 행사 세부 내용을 제공합니다.
 
-To learn more about Next.js, take a look at the following resources:
+### 디렉터리 구조
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
+src/app/event
+├── _components      # 목록/상세 UI 컴포넌트
+├── _containers      # 데이터 페칭과 상태 관리
+├── _services        # 서버 통신 함수(SSR fetch)
+├── _types.ts        # 행사 관련 타입 정의
+└── page.tsx         # 행사 목록 페이지 엔트리
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 설치 및 실행
 
-## Deploy on Vercel
+프로젝트는 [Node.js](https://nodejs.org)와 [Yarn](https://yarnpkg.com)을 사용합니다.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+yarn install   # 의존성 설치
+yarn dev       # 개발 서버 실행 (http://localhost:3000)
+yarn build     # 프로덕션 빌드
+yarn start     # 프로덕션 서버 실행
+yarn lint      # ESLint 검사
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 라이선스
+
+MIT
+
