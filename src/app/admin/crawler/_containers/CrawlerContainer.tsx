@@ -80,54 +80,61 @@ const CrawlerContainer = ({ initialConfigs, initialScheduler }: Props) => {
   const onTest = useCallback(
     async (index: number) => {
       try {
-        const result = await testCrawler(forms[index])
-              if (result) {
+        const result: any = await testCrawler(forms[index])
+        if (Array.isArray(result)) {
           alertDialog.success(JSON.stringify(result, null, 2))
-        } else {
-          alertDialog.error('테스트 실패')
+          return
         }
+
+        if (result?.messages) {
+          setErrors((prev) => {
+            const next = [...prev]
+            next[index] = result.messages
+            return next
+          })
+          alertDialog.error(result.messages.global || '테스트 실패')
+          return
+        }
+
+        alertDialog.error('테스트 실패')
       } catch (err) {
         console.error(err)
         alertDialog.error('테스트 실패')
       }
     },
-    [forms],
+    [forms, alertDialog],
   )
 
   const save = useCallback(async () => {
-        const requiredFields: Record<keyof CrawlerConfigType, string> = {
-      url: 'URL을 입력하세요.',
-      //keywords: '키워드를 입력하세요.',
-      linkSelector: '링크 선택자를 입력하세요.',
-      titleSelector: '제목 선택자를 입력하세요.',
-      dateSelector: '날짜 선택자를 입력하세요.',
-      contentSelector: '내용 선택자를 입력하세요.',
-      urlPrefix: 'URL Prefix를 입력하세요.',
-    }
-
-    const newErrors = forms.map(() => ({} as Record<string, string>))
-    let hasErrors = false
-
-    forms.forEach((form, idx) => {
-      for (const [field, message] of Object.entries(requiredFields)) {
-        const value = form[field as keyof CrawlerConfigType]
-        if (!value || (typeof value === 'string' && value.trim() === '')) {
-          newErrors[idx][field] = message
-          hasErrors = true
-        }
-      }
-    })
-
-    if (hasErrors) {
-      setErrors(newErrors)
-      return
-    }
-
     setErrors(forms.map(() => ({})))
 
     setSaving(true)
     try {
-      await saveCrawlerConfigs(forms)
+      const messages = await saveCrawlerConfigs(forms)
+      if (messages) {
+        const newErrors = forms.map(() => ({} as Record<string, string>))
+
+        Object.entries(messages).forEach(([key, message]) => {
+          if (key === 'global') return
+          const parts = key.replace(/\[|\]/g, '').split('.')
+          if (parts.length === 2) {
+            const idx = parseInt(parts[0], 10)
+            const field = parts[1]
+            if (!isNaN(idx) && newErrors[idx]) {
+              newErrors[idx][field] = message as string
+            }
+          }
+        })
+
+        setErrors(newErrors)
+
+        if (messages.global) {
+          alertDialog.error(messages.global)
+        }
+
+        return
+      }
+
       alertDialog.success('저장되었습니다.')
     } finally {
       setSaving(false)

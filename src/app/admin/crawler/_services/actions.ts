@@ -44,7 +44,9 @@ export async function getCrawlerScheduler(): Promise<boolean> {
   return false
 }
 
-export async function saveCrawlerConfigs(configs: CrawlerConfigType[]) {
+export async function saveCrawlerConfigs(
+  configs: CrawlerConfigType[],
+): Promise<Record<string, string> | null> {
   const payload = configs.map((config) => ({
     ...config,
     keywords: config.keywords
@@ -55,18 +57,27 @@ export async function saveCrawlerConfigs(configs: CrawlerConfigType[]) {
       : [],
   }))
 
-  await fetchSSR('/crawler/configs', {
+  const res = await fetchSSR('/crawler/configs', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),
   })
+
+  if (res.ok) {
+    return null
+  }
+
+  const { messages } = await res.json().catch(() => ({}))
+  return messages ?? null
 }
 
 export async function setCrawlerScheduler(enabled: boolean) {
   await fetchSSR(`/crawler/scheduler?enabled=${enabled}`, { method: 'POST' })
 }
 
-export async function testCrawler(config: CrawlerConfigType) {
+export async function testCrawler(
+  config: CrawlerConfigType,
+): Promise<any> {
   try {
     const body = {
       url: config.url,
@@ -90,8 +101,11 @@ export async function testCrawler(config: CrawlerConfigType) {
     if (res.ok) {
       return await res.json()
     }
+
+    const { messages } = await res.json().catch(() => ({}))
+    return { messages }
   } catch (err) {
     console.error(err)
+    return null
   }
-  return null
 }
