@@ -14,6 +14,11 @@ export default async function DeletePage({
 
   const member = await getLoggedMember()
 
+  if (data && data.canDelete && data.needAuth ) {
+
+    redirect(`/board/check/${seq}?mode=update`)
+  }
+
   if (board && (data.mine || (member && member.authority === 'ADMIN'))) {
     // 삭제 가능
     await processDelete(seq, board.bid) // 삭제 처리

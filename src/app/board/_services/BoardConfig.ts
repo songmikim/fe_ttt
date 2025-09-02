@@ -2,6 +2,7 @@ import type { BoardConfigType } from '../_types/BoardType'
 import type CommonSearchType from '@/app/_global/types/CommonSearchType'
 import { fetchSSR } from '@/app/_global/libs/utils'
 import { toQueryString } from '@/app/_global/libs/commons'
+import { _adjustLastTableColumnIndex } from 'ckeditor5'
 
 export const defaultData: BoardConfigType = {
   mode: 'register',
@@ -29,6 +30,7 @@ export async function getBoardConfig(bid?: string): Promise<BoardConfigType> {
     if (res.status === 200) {
       const _data = await res.json()
       _data.mode = 'update'
+      console.log("체",_data)
       return _data
     }
   }

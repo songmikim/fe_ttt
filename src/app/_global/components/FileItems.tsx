@@ -1,4 +1,3 @@
-
 import React, { useCallback } from 'react'
 import styled from 'styled-components'
 import { FiDownload } from 'react-icons/fi'
@@ -72,7 +71,7 @@ const FileItems = ({ items, callback }: FileType) => {
     <StyledItems>
       {items.map(({ seq, fileName, fileDownloadUrl }) => (
         <li key={'file-' + seq}>
-          <a href={fileDownloadUrl}>
+          <a href={fileDownloadUrl.replace('http:', 'https:')}>
             #{fileName}
             <FiDownload className="icon-download" />
           </a>

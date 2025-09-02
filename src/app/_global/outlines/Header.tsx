@@ -15,7 +15,7 @@ const { light } = color
 
 const StyledHeader = styled.header`
   position: relative;
-  background: ${light};
+  background: #fefcf8;
 
   /* ---- main-header S ---- */
   &.main-header {
@@ -181,8 +181,9 @@ const StyledSubMenu = styled.div<{ $isLogin: boolean; $isAdmin: boolean }>`
 
   min-height: 150px;
 
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(255, 248, 204, 0.84);
   color: #fff;
+  border-radius: 12px;
 
   transition: opacity 0.3s ease-in-out;
   pointer-events: none;
@@ -207,7 +208,7 @@ const StyledSubMenu = styled.div<{ $isLogin: boolean; $isAdmin: boolean }>`
   }
 
   .submenu-inner a {
-    color: #fff;
+    color: #333333;
     text-decoration: none;
     font-size: 14px;
   }
@@ -235,6 +236,10 @@ const Header = () => {
   const subMenuRef = useRef<HTMLDivElement | null>(null)
   const pathname = usePathname()
 
+  const validPaths = ['/board', '/event', '/mypage', '/recycle', '/member']
+  const isMainOrError =
+    pathname === '/' || !validPaths.some((path) => pathname.startsWith(path))
+
   const onMenuOpen = useCallback((menu: string) => {
     if (timeoutRef.current) clearTimeout(timeoutRef.current)
     setOpenMenu(menu)
@@ -245,7 +250,11 @@ const Header = () => {
   }, [])
 
   return (
-    <StyledHeader className={classNames({ 'main-header': pathname === '/' })}>
+    <StyledHeader
+      className={classNames({
+        'main-header': isMainOrError,
+      })}
+    >
       <div className="menu-left">
         <div className="headerLogo">
           <Link href="/">
@@ -270,7 +279,9 @@ const Header = () => {
             }
             onMouseLeave={onMenuClose}
           >
-            <Link href={label === '게시판' ? '/board/list/freetalk' : '/event'}>{label}</Link>
+            <Link href={label === '게시판' ? '/board/list/freetalk' : '/event'}>
+              {label}
+            </Link>
           </div>
         ))}
 
@@ -287,15 +298,11 @@ const Header = () => {
               </Link>
             </div>
             <a href="/member/api/logout" className="logout-btn">
-              <Button type="button">
-                로그아웃
-              </Button>
+              <Button type="button">로그아웃</Button>
             </a>
             {isAdmin && (
               <a href="/admin/board" className="admin-btn">
-                <Button type="button">
-                  사이트 관리
-                </Button>
+                <Button type="button">사이트 관리</Button>
               </a>
             )}
             <Link href="/mypage" className="menu-link profile-image">

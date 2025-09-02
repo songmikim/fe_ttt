@@ -7,7 +7,7 @@ import styled from 'styled-components'
 import color from '@/app/_global/styles/color'
 import fontsize from '@/app/_global/styles/fontsize'
 import Link from 'next/link'
-const { dark, white } = color
+const { dark } = color
 const { big } = fontsize
 
 
@@ -38,13 +38,13 @@ const MyPageSide = styled.aside`
     text-decoration: none;
 
     &:hover {
-      background: #f5f5f5;
+      color: #96bc48;
     }
   }
 
   a.on {
-    background: ${dark};
-    color: ${white};
+    background: #96bc48;
+    color: ${dark};
   }
 `
 

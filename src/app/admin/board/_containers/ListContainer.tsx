@@ -37,7 +37,7 @@ const ListContainer = ({ items, pagination, search }: PropType) => {
 
       const total = items
         ?.map<number>(({ chk }) => (chk ? 1 : 0))
-        .reduce((a, b) => a + b)
+        .reduce((a, b) => a + b, 0)
 
       if (items) setCheckAll(total === items.length)
 
@@ -46,21 +46,46 @@ const ListContainer = ({ items, pagination, search }: PropType) => {
   }, [])
 
   const onRemove = useCallback(() => {
-    /**
-     * 1. 삭제할 게시판을 선택했는지 체크
-     * 2. 정말 삭제할것인지 물어보고 진행
-     */
+    const checked = _items?.filter(({ chk }) => chk) ?? []
 
-    const isCheckedAny = _items ? _items.some(({ chk }) => Boolean(chk)) : false
-    if (!isCheckedAny) {
+    if (checked.length === 0) {
       alertDialog({ text: '삭제할 게시판을 선택하세요.' })
       return
     }
 
     confirmDialog({
       text: '정말 삭제하겠습니까?',
-      confirmCallback: () => {
-        // 실제 삭제 처리 로직...
+      confirmCallback: async () => {
+        try {
+          await Promise.all(
+            checked.map(async (board) => {
+              const res = await fetch(
+                `${process.env.NEXT_PUBLIC_API_URL}/admin/board/delete`,
+                {
+                  method: 'PUT',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ bid: board.bid, name: board.name }),
+                },
+              )
+
+              const result = await res.json()
+              if (!res.ok || !result.success) {
+                throw new Error(result.message || `삭제 실패: ${board.bid}`)
+              }
+
+              if (res.ok) {
+                alertDialog.success('선택한 게시판이 삭제되었습니다.')
+              }
+            }),
+          )
+
+          setItems((prev) =>
+            prev?.filter((item) => !checked.some((c) => c.bid === item.bid)),
+          )
+        } catch (err) {
+          console.error(err)
+          alertDialog({ text: '삭제 중 오류가 발생했습니다.' })
+        }
       },
     })
   }, [_items, alertDialog, confirmDialog])

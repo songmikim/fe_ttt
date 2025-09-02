@@ -17,7 +17,12 @@ const ResultWrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top:30px;
+  margin-top: 30px;
+
+  .content {
+    font-size: 30px;
+    margin-bottom: 20px;
+  }
 `
 
 const ResultNav = styled.div`
@@ -152,6 +157,7 @@ export default function ResultContainer() {
   return (
     <>
       <ResultWrapper>
+        <div className="content school">분리수거 감지 결과</div>
         <ResultNav>
           <ArrowButton
             onClick={() => setPage((p) => Math.max(1, p - 1))}

@@ -1,7 +1,7 @@
 'use client'
 import React from 'react'
 import styled from 'styled-components'
-import { MdCheckBox, MdCheckBoxOutlineBlank, MdOutlineImage } from 'react-icons/md'
+import { MdOutlineImage } from 'react-icons/md'
 import type { BoardFormType } from '@/app/board/_types/BoardType'
 import MessageBox from '@/app/_global/components/MessageBox'
 import { Input, Select, Textarea } from '@/app/_global/components/Forms'
@@ -57,12 +57,11 @@ const BoardForm = ({
   errors,
   pending,
   onChange,
-  onToggle,
   editorCallback,
   fileUploadCallback,
   fileDeleteCallback,
 }: BoardFormType) => {
-  const { isAdmin , isLogin } = useUser()
+  const { isLogin } = useUser()
 
   return (
     board && (
@@ -87,7 +86,7 @@ const BoardForm = ({
             <Input
               type="text"
               name="poster"
-              value={data.poster}
+              value={data?.poster ?? ''}
               onChange={onChange}
             />
             <MessageBox color="danger">{errors?.poster}</MessageBox>
@@ -100,7 +99,7 @@ const BoardForm = ({
               <Input
                 type="password"
                 name="guestPw"
-                value={data.guestPw}
+                value={data?.guestPw ?? ''}
                 onChange={onChange}
                 suppressHydrationWarning={true}
               />
@@ -128,7 +127,7 @@ const BoardForm = ({
             <Input
               type="text"
               name="subject"
-              value={data.subject}
+              value={data?.subject ?? ''}
               onChange={onChange}
             />
             <MessageBox color="danger">{errors?.subject}</MessageBox>
@@ -142,10 +141,10 @@ const BoardForm = ({
                 <input
                   type="hidden"
                   name="content"
-                  defaultValue={data.content}
+                  defaultValue={data?.content ?? ''}
                 />
                 <Editor
-                  data={data.content}
+                  data={data?.content ?? ''}
                   height={350}
                   callback={editorCallback}
                   onChange={onChange}
@@ -170,7 +169,7 @@ const BoardForm = ({
             ) : (
               <Textarea
                 name="content"
-                value={data.content}
+                value={data?.content ?? ''}
                 onChange={onChange}
               />
             )}

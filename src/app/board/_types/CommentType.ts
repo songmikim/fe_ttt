@@ -16,7 +16,7 @@ export type CommentDataType = {
   seq?: number // 댓글 번호
   commenter?: string
   guestPw?: string
-  content: string
+  content?: string
   member?: any
   guest?: boolean
   editable?: boolean
@@ -24,4 +24,6 @@ export type CommentDataType = {
   createdAt?: Date
   modifiedAt?: Date
   deletedAt?: Date
+  canDelete?: boolean
+  needAuth?: boolean
 }

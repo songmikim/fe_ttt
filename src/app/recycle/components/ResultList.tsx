@@ -4,7 +4,7 @@ import fontsize from '@/app/_global/styles/fontsize'
 import color from '@/app/_global/styles/color'
 
 /* 스타일 정리 S */
-const { dark, info } = color 
+const { dark, info } = color
 const { normal, extra } = fontsize
 
 const ResultList = styled.div`
@@ -32,17 +32,17 @@ const Categories = styled.div`
   font-size: ${normal};
 `
 
-const CategoryItem = styled.button`
+const CategoryItem = styled.button<{ disabled?: boolean }>`
   padding: 4px 8px;
   border-radius: 6px;
   font-size: ${extra};
   font-weight: 500;
   background: none;
   border: none;
-  cursor: pointer;
-  color: ${dark}; 
+  cursor: ${({ disabled }) => (disabled ? 'default' : 'pointer')};
+  color: ${dark};
   &:hover {
-    color: ${info};
+    color: ${({ disabled }) => (disabled ? '#000' : info)};
   }
 `
 
@@ -89,7 +89,11 @@ export function ResultComponents({
           </Images>
           <Categories>
             {img.category && (
-              <CategoryItem onClick={() => onSelect(img.categoryKey)}>
+              <CategoryItem
+                className="content-font"
+                disabled={img.category === '기타'}
+                onClick={() => onSelect(img.categoryKey)}
+              >
                 {img.category}
               </CategoryItem>
             )}

@@ -4,6 +4,24 @@ import { Input } from '@/app/_global/components/Forms'
 import { SubmitButton } from '@/app/_global/components/Buttons'
 import MessageBox from '@/app/_global/components/MessageBox'
 import { FaEye, FaEyeSlash } from 'react-icons/fa'
+import EmailSenderForm from './EmailSenderForm'
+
+const AccountActionWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 10px 0;
+
+  a {
+    display: block;
+    padding: 0 10px;
+    text-decoration: none;
+  }
+
+  a + a {
+    border-left: 1px solid #ccc; /* 가운데 구분선 */
+  }
+`
 
 const StyledForm = styled.form`
   h4 {
@@ -17,7 +35,7 @@ const StyledForm = styled.form`
     text-align: center;
   }
 
-    /* 비밀번호 보기/숨기기 버튼 스타일 */
+  /* 비밀번호 보기/숨기기 버튼 스타일 */
   .password-wrapper {
     position: relative;
     display: flex;
@@ -38,8 +56,8 @@ const StyledForm = styled.form`
       transition: all 0.2s;
 
       &:hover {
-        background: #f5f5f5; 
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); 
+        background: #f5f5f5;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
       }
     }
   }
@@ -69,24 +87,22 @@ const LoginForm = ({ errors, action, pending, form, onChange }) => {
           placeholder="비밀번호를 입력하세요."
           value={form.password}
           onChange={onChange}
-          className='password-input'
+          className="password-input"
         />
         <button
           type="button"
           onClick={() => setShowPasword((prve) => !prve)}
-          aria-label={showpassword ? '비밀 번호 숨기기' : '비밀 번호 보기 '}
+          aria-label={showpassword ? '비밀번호 숨기기' : '비밀번호 보기 '}
         >
           {showpassword ? <FaEye size={20} /> : <FaEyeSlash size={20} />}
         </button>
       </div>
       <MessageBox color="danger">{errors?.password}</MessageBox>
 
-      <a
-        href="/member/find-password"
-        style={{ display: 'block', margin: '10px 0' }}
-      >
-        비밀번호 찾기
-      </a>
+      <AccountActionWrapper>
+        <a href="/member/find-password">비밀번호 찾기</a>
+        <a href="/member/account-recover">계정 복구하기</a>
+      </AccountActionWrapper>
 
       <MessageBox color="danger">{errors?.global}</MessageBox>
 

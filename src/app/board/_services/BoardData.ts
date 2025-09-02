@@ -4,55 +4,52 @@ import type {
   BoardSearchType,
   BoardListType,
 } from '../_types/BoardType'
-import { v4 as uuid } from 'uuid'
 import { fetchSSR } from '@/app/_global/libs/utils'
 import { toDate } from 'date-fns'
 import { toQueryString } from '@/app/_global/libs/commons'
+import { notFound } from 'next/navigation'
 
-export async function get(seq?: number): Promise<BoardDataType> {
-  let data: BoardDataType = {
-    mode: 'write',
-    bid: '',
-    gid: uuid(),
-    category: '',
-    poster: '',
-    guestPw: '',
-    subject: '',
-    content: '',
-    commentable: true,
-    notice: false,
-    secret: false,
-    guest: false,
-    editorImages: [],
-    attachFiles: [],
+export async function get(seq?: number, bid?: string): Promise<BoardDataType> {
+   
+  let apiUrl=`/board/write/${bid}`
+  if (seq) {
+    apiUrl=`/board/update/${seq}`
   }
 
-  if (seq) {
-
-    try{
+  try{
       // 게시글 조회
-      const res = await fetchSSR(`/board/update/${seq}`)
+    const res = await fetchSSR(apiUrl)
+    console.log(res)
 
-      if (res.status === 200) {
-        data = await res.json()
-        console.log("대이타",data,data.content)
-        data.mode = 'update'
-        data.bid = data.board?.bid;
-
-        data.createdAt = toDate(data.createdAt ?? new Date())
-        if (data.modifiedAt) data.modifiedAt = toDate(data.modifiedAt)
-        if (data.deletedAt) data.deletedAt = toDate(data.deletedAt)
-      }
-        
-        return data
-      } catch (error) {
-        console.error('데이터 로드 실패', error)
-      }
-      data.mode = 'update'
+    if (res.status === 404) {
+      notFound() // Next.js 404 페이지
     }
-  
-  return data
-  
+
+    if (res.status === 403) {
+      throw new Error('권한없음')
+    }
+
+    if (res.status !== 200) {
+      throw new Error(`예상치 못한 응답 상태: ${res.status}`)
+    }
+
+    // 200인 경우에만 여기 도달
+    
+    const data = await res.json()
+    data.bid = data.board?.bid
+    data.createdAt = toDate(data.createdAt ?? new Date())
+    if (data.modifiedAt) data.modifiedAt = toDate(data.modifiedAt)
+    if (data.deletedAt) data.deletedAt = toDate(data.deletedAt)
+    if (seq) data.mode = 'update'
+    delete data.guestPw;
+
+    return data
+        
+    } catch (error) {
+      console.error('데이터 로드 실패', error)
+      throw Error
+    }
+
 }
 
 export async function getView(seq?: number): Promise<BoardDataType> {
@@ -67,6 +64,7 @@ export async function getView(seq?: number): Promise<BoardDataType> {
       data.createdAt = toDate(data.createdAt ?? new Date())
       if (data.modifiedAt) data.modifiedAt = toDate(data.modifiedAt)
       if (data.deletedAt) data.deletedAt = toDate(data.deletedAt)
+      delete data.guestPw;
     }
         
       return data

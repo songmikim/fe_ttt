@@ -2,10 +2,10 @@
 import React from 'react'
 import styled from 'styled-components'
 import color from '../styles/color'
-const { dark, light } = color
+const { dark } = color
 
 const StyledFooter = styled.footer`
-  background: ${light};
+  background: #fefcf8;
   color: ${dark};
   text-align: center;
   padding: 40px 20px;

@@ -5,7 +5,16 @@ import DetectedItems from '../components/DetectedItems'
 import { Button } from '@/app/_global/components/Buttons'
 import { processDetectData } from '../_services/actions'
 import { useRouter } from 'next/navigation'
-import ContentBox from '@/app/_global/components/ContentBox'
+import styled from 'styled-components'
+
+const DetectContainerWrapper = styled.div`
+  .content {
+    font-size: 30px;
+    margin-bottom: 20px;
+  }
+
+  text-align: center;
+`
 
 const DetectContainer = () => {
   const [items, setItems] = useState<any>([])
@@ -40,7 +49,8 @@ const DetectContainer = () => {
   }, [items, router])
 
   return (
-    <ContentBox width={640}>
+    <DetectContainerWrapper>
+      <div className="content content-font">재활용 쓰레기를 촬영해주세요!</div>
       <DetectObject width={640} height={640} callback={callback} />
       <DetectedItems items={items} />
       {items.length > 0 && (
@@ -48,7 +58,7 @@ const DetectContainer = () => {
           저장하기
         </Button>
       )}
-    </ContentBox>
+    </DetectContainerWrapper>
   )
 }
 

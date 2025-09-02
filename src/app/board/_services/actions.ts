@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import { toPlainObj } from '@/app/_global/libs/commons'
 import { fetchSSR } from '@/app/_global/libs/utils'
 import { getBoardConfig } from './BoardConfig'
+import { deleteComment, getComment } from './comment'
 
 /**
  * 게시글 등록, 수정 처리
@@ -55,7 +56,7 @@ export async function processUpdate(errors: any, formData: FormData) {
     },
     body: JSON.stringify(params),
   })
-  console.log(res)
+  console.log("res", res, await res.text())
 
   const redirectUrl = `/board/list/${board.bid}`
 
@@ -72,12 +73,21 @@ export async function processPassword(errors: any, formData: FormData) {
   errors = {}
   const params = toPlainObj(formData)
   let hasErrors: boolean = false
-  const { seq, mode, password, bid } = params // bid 추가
+  const { seq, mode, password, bid } = params
   
-  // 유효성 검사
   if (!seq || !mode || !['update', 'delete', 'comment_update', 'comment_delete'].includes(mode)) {
     errors.global = '잘못된 접근입니다.'
     hasErrors = true
+  }
+
+  let boardDataSeq: number = seq;
+  if (mode.startsWith("comment_")) {
+      try {
+          const comment = await getComment(seq)
+          boardDataSeq = comment?.boardDataSeq || seq  // fallback to seq
+      } catch (error) {
+          boardDataSeq = seq  // 에러 시 기본값
+      }
   }
 
   if (!password?.trim()) {
@@ -127,8 +137,14 @@ export async function processPassword(errors: any, formData: FormData) {
     
     redirect(`/board/list/${bid}`)
   }  else if (mode.startsWith('comment_')) {
-    // 댓글 관련 처리
-    redirect(`/board/view/${seq}`)
+    try {
+      deleteComment(seq)
+    } catch (error) {
+      console.error("삭제 에러:", error)
+      return { global: '삭제 중 오류가 발생했습니다.' }
+      throw error
+    }
+    redirect(`/board/view/${boardDataSeq}`)
   }
 }
 

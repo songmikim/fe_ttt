@@ -58,6 +58,7 @@ const CommentForm = ({
 }: CommentType) => {
   return (
     <StyledForm action={action} autoComplete="off">
+      <input type="hidden" name="boardDataSeq" defaultValue={form?.boardDataSeq} />
       <input type="hidden" name="guest" defaultValue={'' + form?.guest} />
       <input
         type="hidden"

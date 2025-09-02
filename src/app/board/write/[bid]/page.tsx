@@ -8,7 +8,7 @@ import { get } from '../../_services/BoardData'
 export default async function WritePage({ params }) {
   const { bid } = await params
   const board: BoardConfigType = await getBoardConfig(bid)
-  const data: BoardDataType = await get()
+  const data: BoardDataType = await get(undefined, bid);
   data.bid = bid
 
   return (

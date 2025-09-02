@@ -6,7 +6,6 @@ import type { BoardViewType } from '@/app/board/_types/BoardType'
 import { nl2br } from '@/app/_global/libs/commons'
 import FileItems from '@/app/_global/components/FileItems'
 import color from '@/app/_global/styles/color'
-import { processDelete }  from '../../../_services/actions'
 import fontsize from '../../../../_global/styles/fontsize'
 
 const { danger, info, white } = color
@@ -95,7 +94,7 @@ const StyledLinks = styled.div`
   }
 `
 
-const BoardView = ({ board, data }: BoardViewType) => {
+const BoardView = ({ data }: BoardViewType) => {
   return (
     data && (
       <>
@@ -115,7 +114,6 @@ const BoardView = ({ board, data }: BoardViewType) => {
               <span>IP: {data.ip}</span>
             </div>
             <div className="right">
-              <span>조회수: {data?.viewCount?.toLocaleString()}</span>
               {data.createdAt && (
                 <span>
                   작성일시: {format(data.createdAt, 'yyyy.MM.dd HH:mm')}

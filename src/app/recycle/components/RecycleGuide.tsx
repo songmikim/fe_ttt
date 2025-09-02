@@ -9,7 +9,6 @@ import recycleCan from '@/app/_global/assets/images/recycle_can.png'
 import recycleGlass from '@/app/_global/assets/images/recycle_glass.png'
 import recyclePaper from '@/app/_global/assets/images/recycle_paper.png'
 
-
 const recycleImages: Record<string, any> = {
   plastic: recyclePlastic,
   vinyl: recycleVinyl,
@@ -40,7 +39,7 @@ const GuideItem = styled.div`
   border-radius: 12px;
   padding: 20px;
   width: 100%;
-  max-width: 900px; 
+  max-width: 900px;
 `
 
 const GuideImage = styled.img`
@@ -56,7 +55,6 @@ const GuideTitle = styled.div`
   display: inline-block;
   padding: 6px 16px;
   font-size: ${extra};
-  font-weight: bold;
   text-align: center;
   border-radius: 999px;
   background: #1e90ff;
@@ -105,7 +103,7 @@ export default function RecycleGuide({
     <GuideWrapper>
       {visibleCategories.map((c, idx) => (
         <GuideItem key={idx}>
-          <GuideTitle>{c.category2}</GuideTitle>
+          <GuideTitle className="binggre">{c.category2}</GuideTitle>
           {recycleImages[c.category1] && (
             <>
               <GuideImage

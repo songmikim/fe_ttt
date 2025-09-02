@@ -43,8 +43,8 @@ type FileType = {
   height?: number
   viewOnly?: boolean
   viewOrgImage?: boolean
-  callback?: (item: any) => void,
-  fallbackImage? : string | StaticImageData // 이미지가 없을때 출력 될 이미지
+  callback?: (item: any) => void
+  fallbackImage?: string | StaticImageData // 이미지가 없을때 출력 될 이미지
 }
 
 const ImageItem = ({
@@ -102,7 +102,7 @@ const ImageItem = ({
               className="org-image"
               width={500}
               height={500}
-              src={fileUrl}
+              src={fileUrl.replace('http:', 'https:')}
               alt={fileName}
             />
           </LayerPopup>

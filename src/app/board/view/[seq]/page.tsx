@@ -20,9 +20,6 @@ export default async function ViewPage({
   const { board } = data
   data.mode = 'view'
 
-  const search = await searchParams
-
-
   const comments = await getComments(seq)
 
   return (

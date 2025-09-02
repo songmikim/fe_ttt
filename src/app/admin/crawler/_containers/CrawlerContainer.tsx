@@ -95,15 +95,14 @@ const CrawlerContainer = ({ initialConfigs, initialScheduler }: Props) => {
   )
 
   const save = useCallback(async () => {
-        const requiredFields: Record<keyof CrawlerConfigType, string> = {
-      url: 'URL을 입력하세요.',
-      //keywords: '키워드를 입력하세요.',
-      linkSelector: '링크 선택자를 입력하세요.',
-      titleSelector: '제목 선택자를 입력하세요.',
-      dateSelector: '날짜 선택자를 입력하세요.',
-      contentSelector: '내용 선택자를 입력하세요.',
-      urlPrefix: 'URL Prefix를 입력하세요.',
-    }
+      const requiredFields: Partial<Record<keyof CrawlerConfigType, string>> = {
+        url: 'URL을 입력하세요.',
+        linkSelector: '링크 선택자를 입력하세요.',
+        titleSelector: '제목 선택자를 입력하세요.',
+        dateSelector: '날짜 선택자를 입력하세요.',
+        contentSelector: '내용 선택자를 입력하세요.',
+        urlPrefix: 'URL Prefix를 입력하세요.',
+      }
 
     const newErrors = forms.map(() => ({} as Record<string, string>))
     let hasErrors = false

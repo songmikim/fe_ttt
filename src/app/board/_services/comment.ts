@@ -10,27 +10,44 @@ import { toDate } from '@/app/_global/libs/commons'
  */
 export async function getList(seq: number) {
   const res = await fetchSSR(`/comment/comments/${seq}`)
-  if (res.status === 200) {
-    const data = await res.json()  // ListData 객체
-    const items = data.items || []  // 실제 배열 추출
+  try {
+    const data = await res.json() // ListData 객체
+    const items = data.items || [] // 실제 배열 추출
     items.forEach((item) => processData(item))
-    
+
     return items
+  } catch (error) {
+    return []
   }
-  return []
 }
 
 /**
  * 댓글 한개 삭제
  * @param seq
  */
-export async function deleteComment(seq: number) {
+export async function deleteComment(seq?: number) {
+  if (!seq) return
+
   const res = await fetchSSR(`/comment/comment/${seq}`, {
     method: 'DELETE',
   })
 
   if (res.status === 200) {
     return await res.json()
+  }
+}
+
+export async function getComment(seq: number) {
+  const res = await fetchSSR(`/comment/comment/${seq}`, {
+    method: 'GET',
+  })
+
+  let item: CommentDataType
+
+  if (res.status === 200) {
+    item = await res.json()
+    console.log('dfasf', item)
+    return item
   }
 }
 

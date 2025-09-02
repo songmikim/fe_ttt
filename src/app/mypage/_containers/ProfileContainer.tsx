@@ -14,8 +14,55 @@ import LayerPopup from '@/app/_global/components/LayerPopup'
 import { Button } from '@/app/_global/components/Buttons'
 import useAlertDialog from '@/app/_global/hooks/useAlertDialog'
 import { redirect } from 'next/navigation'
+import { FaEye, FaEyeSlash } from 'react-icons/fa'
+import styled from 'styled-components'
+
+
+const PwModalContent = styled.div`
+  .password-wrapper {
+    position: relative;
+
+    input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+
+    button {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      color: #666;
+
+      &:hover {
+        color: #333;
+      }
+    }
+  }
+
+  p {
+    margin-top: 8px;
+    color: #d9534f;
+    font-size: 13px;
+  }
+
+  .button-group {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+  }
+`
+
 
 const ProfileContainer = () => {
+  const [showPw, setShowPw] = useState(false)
   const { loggedMember } = useUser()
   const [form, setForm] = useState(loggedMember)
   const [errors, action, pending] = useActionState<any, any>(processProfile, {})
@@ -120,25 +167,67 @@ const ProfileContainer = () => {
         onClose={handleCloseModal}
         width={400}
       >
-        <input
-          type="password"
-          placeholder="비밀번호를 입력하세요"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="w-full p-2 border rounded"
-        />
-        {pwError && <p className="text-red-500 mt-2">{pwError}</p>}
-        <div className="flex justify-end gap-2 mt-4">
-          <Button type="button" onClick={handleCloseModal}>
-            취소
-          </Button>
-          <Button type="button" onClick={onSubmitWithPassword}>
-            확인
-          </Button>
-        </div>
+        <PwModalContent>
+          <div className="password-wrapper">
+            <input
+              type={showPw ? 'text' : 'password'}
+              placeholder="비밀번호를 입력하세요"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <button
+              type="button"
+              onClick={() => setShowPw((prev) => !prev)}
+              aria-label={showPw ? '비밀번호 숨기기' : '비밀번호 보기'}
+            >
+              {showPw ? <FaEye size={20} /> : <FaEyeSlash size={20} />}
+            </button>
+          </div>
+
+          {pwError && <p>{pwError}</p>}
+
+          <div className="button-group">
+            <Button type="button" className="cancel" onClick={handleCloseModal}>
+              취소
+            </Button>
+            <Button
+              type="button"
+              className="confirm"
+              onClick={onSubmitWithPassword}
+            >
+              확인
+            </Button>
+          </div>
+        </PwModalContent>
       </LayerPopup>
     </>
   )
 }
 
 export default React.memo(ProfileContainer)
+
+{/* <LayerPopup
+        title="비밀번호 확인"
+        isOpen={pwModalOpen}
+        onClose={handleCloseModal}
+        width={400}
+      >
+        <PwModalContent>
+          <input
+            type="password"
+            placeholder="비밀번호를 입력하세요"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full p-2 border rounded"
+          />
+          {pwError && <p className="text-red-500 mt-2">{pwError}</p>}
+          <div className="flex justify-end gap-2 mt-4">
+            <Button type="button" onClick={handleCloseModal}>
+              취소
+            </Button>
+            <Button type="button" onClick={onSubmitWithPassword}>
+              확인
+            </Button>
+          </div>
+        </PwModalContent>
+      </LayerPopup> */}

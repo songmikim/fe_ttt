@@ -5,7 +5,7 @@ import styled from 'styled-components'
 import ContentBox from './ContentBox'
 import { Button } from './Buttons'
 import fontsize from '../styles/fontsize'
-import mainImage from '../assets/images/main.jpg'
+import mainImage from '../assets/images/main5.png'
 
 interface ErrorPageProps {
   statusCode: number | string

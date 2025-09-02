@@ -67,7 +67,7 @@ const DetectObject = ({ width, height, callback }: PropType) => {
     ctx.lineWidth = 5
     ctx.fillStyle = 'transparent'
     ctx.strokeStyle = 'red'
-    ctx.font = '13px bold'
+    ctx.font = "17px 'KyoboHandwriting2019', sans-serif"
     ctx.clearRect(0, 0, width, height)
 
     canvas.toBlob((blob) => {
@@ -96,10 +96,11 @@ const DetectObject = ({ width, height, callback }: PropType) => {
             ctx.strokeRect(x1, y1, w, h)
 
             ctx.fillStyle = color[cls]
-            ctx.fillRect(x1, y1, w, 20)
+            ctx.fillRect(x1, y1, w, 25)
 
-            ctx.fillStyle = '#fff'
-            ctx.fillText(category[cls], x1 + 10, y1 + 13)
+            const textColor = category[cls] === '비닐' ? '#000' : '#fff'
+            ctx.fillStyle = textColor
+            ctx.fillText(category[cls], x1 + 10, y1 + 16)
 
             const img = new Image()
             img.src = canvas.toDataURL()

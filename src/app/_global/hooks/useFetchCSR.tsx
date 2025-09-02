@@ -20,7 +20,7 @@ export default function useFetchCSR() {
   return {
     ready,
     fetchCSR: async (url: string, options: RequestInit = {}) => {
-      if (!ready) throw new Error('Auth headers not ready')
+      /// if (!ready) throw new Error('Auth headers not ready')
 
       const headers: HeadersInit = { ...(options.headers || {}) }
       if (token) headers['Authorization'] = `Bearer ${token}`

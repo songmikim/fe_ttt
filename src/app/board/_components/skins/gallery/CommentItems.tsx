@@ -1,12 +1,13 @@
 'use client'
 import React, { useCallback } from 'react'
 import styled from 'styled-components'
-import { useRouter } from 'next/navigation'
+import { redirect, useRouter } from 'next/navigation'
 import type { CommentDataType } from '@/app/board/_types/CommentType'
 import { format } from 'date-fns'
 import { nl2br } from '@/app/_global/libs/commons'
 import useConfirmDialog from '@/app/_global/hooks/useConfirmDialog'
 import color from '@/app/_global/styles/color'
+import { deleteComment } from '@/app/board/_services/comment'
 const { danger, primary, white } = color
 const StyledItems = styled.ul`
   margin-bottom: 30px;
@@ -59,21 +60,24 @@ const StyledItems = styled.ul`
 `
 
 const CommentItem = ({ item }: { item: CommentDataType }) => {
-  const { seq, commenter, member, content, createdAt, editable } = item
+  const { seq, commenter, member, content, createdAt } = item
   const confirmDialog = useConfirmDialog()
-  const router = useRouter()
 
   const onDelete = useCallback(
-    (e) => {
+    (needAuth) => (e) => {
       e.preventDefault()
       confirmDialog({
         text: '정말 삭제하겠습니까?',
         confirmCallback: () => {
-          router.push(`/board/comment/delete/${seq}`)
+          if (needAuth) {
+            redirect(`/board/check/${seq}?mode=comment_delete`)
+          } else {
+            deleteComment(seq)
+          }
         },
       })
     },
-    [confirmDialog, router, seq],
+    [confirmDialog, seq],
   )
 
   return (
@@ -87,17 +91,16 @@ const CommentItem = ({ item }: { item: CommentDataType }) => {
           <div className="right">{format(createdAt, 'yyyy.MM.dd HH:mm')}</div>
         )}
       </div>
-      <div
-        className="content"
-        dangerouslySetInnerHTML={{ __html: nl2br(content) }}
-      />
-      {editable && (
+      {content && (
+        <div
+          className="content"
+          dangerouslySetInnerHTML={{ __html: nl2br(content) }}
+        />
+      )}
+      {item.canDelete && (
         <div className="links">
-          <a className="btn1" onClick={onDelete}>
+          <a className="btn1" onClick={onDelete(item.needAuth)}>
             삭제
-          </a>
-          <a className="btn2" href={'/board/comment/' + seq}>
-            수정
           </a>
         </div>
       )}
