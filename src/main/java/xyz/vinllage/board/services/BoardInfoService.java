@@ -99,7 +99,7 @@ public class BoardInfoService {
      */
     public ListData<BoardData> getList(String bid, BoardSearch search) {
         search = Objects.requireNonNullElseGet(search, BoardSearch::new);
-        search.setBid(List.of(bid));
+        search.setBid(bid);
 
         return getList(search);
     }
@@ -113,7 +113,7 @@ public class BoardInfoService {
      */
     public List<BoardData> getLatest(String bid, int limit) {
         BoardSearch search = new BoardSearch();
-        search.setBid(List.of(bid));
+        search.setBid(bid);
         search.setLimit(limit);
 
         return getList(search).getItems();
@@ -126,14 +126,8 @@ public class BoardInfoService {
     public ListData<BoardData> getList(BoardSearch search) {
         int page = Math.max(search.getPage(), 1);
         int limit = search.getLimit();
-        List<String> bids = search.getBid();
+        String bids = search.getBid();
         Board board = null;
-        if (bids != null && bids.size() == 1) { // 게시판 아이디가 1개인 경우 게시판 설정 조회
-            board = configInfoService.get(bids.getFirst());
-
-            // 한페이지당 게시글 갯수
-            limit = board.getRowsForPage();
-        }
 
         limit = limit < 1 ? 20 : limit;
         int offset = (page - 1) * limit; // 레코드 시작 번호

@@ -5,4 +5,6 @@ import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import xyz.vinllage.crawler.entities.CrawledData;
 
 public interface CrawledDataRepository extends JpaRepository<CrawledData, Integer>, QuerydslPredicateExecutor<CrawledData> {
+
+    void deleteByLinkStartingWith(String prefix);
 }

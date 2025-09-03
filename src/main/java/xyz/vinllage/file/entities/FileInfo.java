@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import xyz.vinllage.file.constants.FileStatus;
 import xyz.vinllage.global.entities.BaseEntity;
 
 @Data
@@ -11,9 +12,9 @@ import xyz.vinllage.global.entities.BaseEntity;
 @Table(indexes = {
         // 검색 성능을 빠르게 하기 위해 사용
         @Index(name="idx_fileinfo_gid1", columnList = "gid,createdAt"),
-        @Index(name="idx_fileinfo_gid2", columnList = "gid,done,createdAt"),
+        @Index(name="idx_fileinfo_gid2", columnList = "gid,status,createdAt"),
         @Index(name="idx_fileinfo_location1", columnList = "gid,location,createdAt"),
-        @Index(name="idx_fileinfo_location2", columnList = "gid,location,done,createdAt")
+        @Index(name="idx_fileinfo_location2", columnList = "gid,location,status,createdAt")
 })
 @EntityListeners(AuditingEntityListener.class)
 public class FileInfo extends BaseEntity {
@@ -39,7 +40,8 @@ public class FileInfo extends BaseEntity {
     @CreatedBy
     private String createdBy; // 업로드한 로그인 사용자의 이메일
 
-    private boolean done; // 파일 그룹 작업이 완료 되었는지 여부
+    @Enumerated(EnumType.STRING)
+    private FileStatus status = FileStatus.UNDONE; // 파일 그룹 작업이 완료 되었는지 여부
 
     @Transient // 엔티티 내부에서 사용할 목적의 필드임을 알려는 애노테이션
     private String filePath; // 파일이 위치한 서버 경로
@@ -55,6 +57,4 @@ public class FileInfo extends BaseEntity {
 
     @Transient
     private boolean image;
-
-
 }

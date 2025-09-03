@@ -1,5 +1,5 @@
 spring:
-  # H2 데이터베이스 설정
+  # 데이터베이스 설정
   datasource:
     url: jdbc:h2:mem:testdb
     driver-class-name: org.h2.Driver
@@ -15,18 +15,15 @@ spring:
       hibernate:
         format_sql: true
 
-  # Redis 설정 (테스트용)
-  data:
-    redis:
-      host: localhost
-      port: 6379
+# JWT 설정 (테스트용)
+member:
+  jwt:
+    secret: test-secret-key-for-testing-purpose-only
+    valid-time: 3600
+    header: Authorization
 
-# Redis 관련 설정값들 (기본값으로 설정)
-redis:
-  host: localhost
-  port: 6379
-
-  # H2 콘솔 활성화
-  h2:
-    console:
-      enabled: true
+# 또는 jwt로 시작하는 설정이라면
+jwt:
+  secret: test-secret-key-for-testing-purpose-only
+  validTime: 3600
+  header: Authorization

@@ -6,14 +6,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
-import xyz.vinllage.global.email.entities.EmailEntiry;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -21,50 +15,18 @@ public class EmailSendService {
     private final JavaMailSender mailSender;
     private final SpringTemplateEngine templateEngine;
 
-    public boolean sendMail(EmailEntiry message, String tpl, Map<String, Object> tplData) {
-        String text = null;
-        /**
-         * 이메일 템플릿 사용하는 경우 EmailMessage의 제목, 내용, 수신인 및 tplData 추가 치환 속성을 전달하고
-         * 타임리프로 번역된 텍스트를 반환 값으로 처리
-         */
-        if (StringUtils.hasText(tpl)) {
-            tplData = Objects.requireNonNullElse(tplData, new HashMap<>());
-            Context context = new Context();
-
-            tplData.put("to", message.to());
-            tplData.put("subject", message.subject());
-            tplData.put("message", message.message());
-
-            context.setVariables(tplData);
-
-            text = templateEngine.process("email/" + tpl, context);
-        } else { // 템플릿 전송이 아닌 경우 메세지로 대체
-            text = message.message();
-        }
-
-        try {
-            MimeMessage mimeMessage = mailSender.createMimeMessage();
-            MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, false, "UTF-8");
-            mimeMessageHelper.setTo(message.to()); // 메일 수신자
-            mimeMessageHelper.setSubject(message.subject());  // 메일 제목
-            mimeMessageHelper.setText(text, true); // 메일 내용
-            mailSender.send(mimeMessage);
-
-            return true;
-        }catch (MessagingException e){
-            e.printStackTrace();
-        }
-
-        return false;
-    }
-
-    public boolean sendEmail(EmailEntiry message) {
-        return sendMail(message, null , null);
-    }
-
-    public void sendVerificationEmail(String to, String code) {
+    /**
+     * 메일 전송
+     *
+     * @param to 전송 대상 이메일
+     * @param subject 메일 제목
+     * @param title 템플릿 내 제목
+     * @param code 전송할 인증 코드
+     */
+    public void sendEmail(String to, String subject, String title, String code) {
         // 1) 템플릿에 전달할 데이터
         Context context = new Context();
+        context.setVariable("title", title);
         context.setVariable("code", code);
 
         // 2) 템플릿 처리
@@ -75,7 +37,7 @@ public class EmailSendService {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
             helper.setTo(to);
-            helper.setSubject("이메일 인증 코드");
+            helper.setSubject(subject);
             helper.setText(htmlContent, true); // true = HTML
 
             // 4) 메일 발송
@@ -85,4 +47,7 @@ public class EmailSendService {
         }
     }
 
+    public void sendTemporaryPasswordEmail(String to, String code) {
+        sendEmail(to, "임시 비밀번호 발급", "Vinllage 임시 비밀번호", code);
+    }
 }

@@ -7,6 +7,7 @@ spring:
     redis:
       host: ${redis.host}
       port: ${redis.port}
+      timeout: 100000
   mail:
     host: smtp.gmail.com # SMTP 서버 호스트
     port: 587 # SMTP 서버 포트
@@ -74,10 +75,11 @@ springdoc:
     - /api/v1/**                # 해당 경로의 API만 문서화
 
 # JWT 설정
+
 member:
   jwt:
     secret: ${jwt.secret}       # 로그인 시 발급되는 JWT 토큰의 비밀키
-    validTime: ${jwt.validTime} # 토큰 유효 시간 (ms)
+    validtime: ${jwt.validTime} # 토큰 유효 시간 (ms)
 
 # 외부 API 서버 주소
 api:

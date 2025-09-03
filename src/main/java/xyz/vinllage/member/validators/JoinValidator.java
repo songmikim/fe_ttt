@@ -15,7 +15,7 @@ import xyz.vinllage.member.repositories.MemberRepository;
 @Lazy
 @Component
 @RequiredArgsConstructor
-public class JoinValidator implements Validator, PasswordValidator, MobileValidator {
+public class JoinValidator implements Validator, PasswordValidator, MobileValidator  {
 
     private final MemberRepository repository;
 
@@ -57,10 +57,6 @@ public class JoinValidator implements Validator, PasswordValidator, MobileValida
             errors.rejectValue("email", "Duplicated");
         }
 
-
-
-
-
         if (!isSocial) {
             // 2. 비밀번호 복잡성
             if (!checkAlpha(password, false) || !checkNumber(password) || !checkSpecialChars(password)) {
@@ -72,6 +68,7 @@ public class JoinValidator implements Validator, PasswordValidator, MobileValida
                 errors.rejectValue("confirmPassword", "Mismatch");
             }
         }
+
 
         // 4. 휴대전화번호 형식 검증
         String mobile = form.getMobile();

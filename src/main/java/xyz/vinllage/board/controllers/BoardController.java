@@ -34,7 +34,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/board")
+@RequestMapping("/api/v2/board")
 @Tag(name="게시판 구현 API", description = "게시글 작성, 수정, 조회, 삭제 등의 기능을 제공")
 public class BoardController {
     private final BoardInfoService infoService;
@@ -71,7 +71,7 @@ public class BoardController {
         commonProcess(bid, "list", model);
         
         if (StringUtils.hasText(bid)) {
-            search.setBid(List.of(bid));
+            search.setBid(bid);
         }
 
         return infoService.getList(search);

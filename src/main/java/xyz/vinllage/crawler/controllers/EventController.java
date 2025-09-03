@@ -16,7 +16,7 @@ import xyz.vinllage.global.search.ListData;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/events")
-@Tag(name="환경 행사 API", description = "크롤링된 환경 행사 정보를 조회하는 기능을 제공")
+@Tag(name="크롤러 API", description = "크롤러 설정 API, 크롤러 API, 환경행사 API")
 public class EventController {
 
     private final CrawledDataInfoService infoService;

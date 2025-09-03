@@ -112,7 +112,7 @@ public class FileUploadService {
     public void processDone(String gid) {
         List<FileInfo> items = infoService.getList(gid, null, FileStatus.ALL);
 
-        items.forEach(item -> item.setDone(true));
+        items.forEach(item -> item.setStatus(FileStatus.DONE));
 
         repository.saveAllAndFlush(items);
     }

@@ -13,7 +13,7 @@ import xyz.vinllage.crawler.entities.CrawledData;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/crawler")
-@Tag(name = "크롤러 API", description = "크롤링 데이터 등록 및 수정 API")
+@Tag(name="크롤러 API", description = "크롤러 설정 API, 크롤러 API, 환경행사 API")
 public class CrawlerController {
 
     private final HttpServletRequest request;

@@ -36,6 +36,7 @@ public class EventControllerTest {
     @Autowired
     private CrawledDataRepository repository;
 
+
     /**
      *  각 테스트 실행 전 초기화 작업 수행
      *  - 기존 저장소 데이터를 모두 삭제
@@ -137,4 +138,5 @@ public class EventControllerTest {
         mockMvc.perform(get("/api/v1/events/{hash}", 999))
                 .andExpect(status().isNotFound());
     }
+
 }

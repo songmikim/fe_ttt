@@ -14,6 +14,7 @@ import xyz.vinllage.file.repositories.FileInfoRepository;
 import xyz.vinllage.global.configs.FileProperties;
 import xyz.vinllage.global.libs.Utils;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
@@ -44,7 +45,7 @@ public class FileInfoService {
     public FileInfo get(String gid) {
         List<FileInfo> items = getList(gid);
 
-        return items == null || items.size() == 0 ? null : items.get(0);
+        return items == null || items.isEmpty()? null : items.get(0);
     }
 
     /**
@@ -59,14 +60,20 @@ public class FileInfoService {
 
         QFileInfo fileInfo = QFileInfo.fileInfo;
         BooleanBuilder andBuilder = new BooleanBuilder();
-        andBuilder.and(fileInfo.gid.eq(gid));
-
+        if (StringUtils.hasText(gid)) {
+            andBuilder.and(fileInfo.gid.eq(gid));
+        }
         if (StringUtils.hasText(location)) {
             andBuilder.and(fileInfo.location.eq(location));
         }
 
         if (status != FileStatus.ALL) {
-            andBuilder.and(fileInfo.done.eq(status == FileStatus.DONE));
+            if (status == FileStatus.CLEAR || status == FileStatus.UNDONE) {
+                andBuilder.and(fileInfo.status.in(FileStatus.CLEAR, FileStatus.UNDONE));
+                andBuilder.and(fileInfo.createdAt.before(LocalDateTime.now().minusDays(1L)));
+            } else {
+                andBuilder.and(fileInfo.status.eq(FileStatus.DONE));
+            }
         }
 
         List<FileInfo> items = (List<FileInfo>)repository.findAll(andBuilder, fileInfo.createdAt.asc());
@@ -93,7 +100,6 @@ public class FileInfoService {
      * @param item
      */
     public void addInfo(FileInfo item) {
-        item.setFileUrl(getFileUrl(item));
         item.setFilePath(getFilePath(item));
 
         /* 파일이 이미지인지 체크 */
@@ -101,13 +107,15 @@ public class FileInfoService {
         item.setImage(StringUtils.hasText(contentType) && contentType.startsWith("image"));
 
         /* 이미지인 경우 썸네일 기본 URL, 기본 Path  추가 */
-        if (item.isImage()) {
-
-            item.setThumbBaseUrl(utils.getUrl("/file/thumb?seq=" + item.getSeq()));
+        try {
+            item.setFileUrl(getFileUrl(item));
+            if (item.isImage()) {
+                item.setThumbBaseUrl(utils.getUrl("/file/thumb?seq=" + item.getSeq()));
+            }
+            item.setFileDownloadUrl(utils.getUrl("/file/download/" + item.getSeq()));
+        } catch (IllegalStateException e) {
+            // 스케줄러 같은 비웹 환경에서는 URL 세팅 스킵
         }
-
-        // 파일 다운로드 URL
-        item.setFileDownloadUrl(utils.getUrl("/file/download/" + item.getSeq()));
     }
 
     public String folder(FileInfo item) {

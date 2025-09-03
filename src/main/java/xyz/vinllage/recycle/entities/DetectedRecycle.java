@@ -1,5 +1,6 @@
 package xyz.vinllage.recycle.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import xyz.vinllage.global.entities.BaseEntity;
@@ -15,6 +16,7 @@ public class DetectedRecycle extends BaseEntity {
     private String gid;  // 파일 gid
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
     private Member member;
 
     // 길이 고려: TEXT 또는 DB가 지원하면 JSON 타입

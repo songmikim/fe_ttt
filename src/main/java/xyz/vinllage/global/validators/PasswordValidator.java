@@ -43,4 +43,7 @@ public interface PasswordValidator {
 
         return password.matches(pattern);
     }
+
+
+
 }

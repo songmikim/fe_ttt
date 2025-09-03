@@ -60,7 +60,9 @@ public class Utils {
         // 필드별 검증 실패 메세지  - rejectValue, 커맨드 객체 검증(필드)
         Map<String, List<String>> messages = errors.getFieldErrors()
                 .stream()
-                .collect(Collectors.toMap(FieldError::getField, f -> getMessages(f.getCodes()), (v1, v2) -> v2));
+                .collect(Collectors.toMap(FieldError::getField,
+                        f -> getMessages(f.getCodes()),
+                        (v1, v2) -> v2));
         // 글로벌 검증 실패 메세지 - reject
         List<String> gMessages = errors.getGlobalErrors()
                 .stream()

@@ -42,6 +42,8 @@ public class SecurityConfig {
                     });
                 })
                 .authorizeHttpRequests(c -> {
+//                    c.requestMatchers("/api/v1/crawler").hasAuthority("ADMIN")
+//                            .anyRequest().permitAll();
                     c.anyRequest().permitAll();
                 });
 

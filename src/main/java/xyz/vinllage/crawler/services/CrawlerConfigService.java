@@ -4,14 +4,17 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import xyz.vinllage.crawler.controllers.RequestCrawling;
 import xyz.vinllage.crawler.entities.CrawlerConfig;
+import xyz.vinllage.crawler.repositories.CrawledDataRepository;
 import xyz.vinllage.crawler.repositories.CrawlerConfigRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class CrawlerConfigService {
     private final CrawlerConfigRepository repository;
+    private final CrawledDataRepository crawledDataRepository;
 
     /**
      * 전달받은 크롤링 설정 폼 목록을 엔티티로 변환하고,
@@ -42,5 +45,20 @@ public class CrawlerConfigService {
      */
     public List<CrawlerConfig> gets() {
         return repository.findAll();
+    }
+
+    public void delete(Long id) {
+        Optional<CrawlerConfig> optional = repository.findById(id);
+        if (optional.isPresent()) {
+            CrawlerConfig config = optional.get();
+            repository.delete(config);
+            String prefix = config.getUrlPrefix();
+            if (prefix == null) {
+                prefix = config.getUrl();
+            }
+            if (prefix != null) {
+                crawledDataRepository.deleteByLinkStartingWith(prefix);
+            }
+        }
     }
 }

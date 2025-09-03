@@ -1,7 +1,7 @@
 package xyz.vinllage.file.services;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Lazy;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import xyz.vinllage.file.constants.FileStatus;
@@ -15,7 +15,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-@Lazy
 @Service
 @RequiredArgsConstructor
 public class FileDeleteService {
@@ -77,5 +76,31 @@ public class FileDeleteService {
 
     public List<FileInfo> process(String gid) {
         return process(gid, null);
+    }
+
+    /**
+     * 매일 자정마다 하루전 미완료된 파일 일괄 삭제
+     */
+    @Scheduled(cron="0 0 0 * * *")
+    public void clearUnDone() {
+        // 미완료된 파일 목록 조회(하루전)
+        List<FileInfo> clearItems = infoService.getList(null, null, FileStatus.CLEAR);
+        List<FileInfo> undoneItems = infoService.getList(null, null, FileStatus.UNDONE);
+
+        List<FileInfo> items = new ArrayList<>();
+        items.addAll(clearItems);
+        items.addAll(undoneItems);
+
+        items.forEach(item -> {
+            // 실 파일 삭제
+            String path = item.getFilePath();
+            File file = new File(path);
+            if (file.exists()) {
+                file.delete();
+            }
+        });
+
+        repository.deleteAll(items);
+        repository.flush();
     }
 }

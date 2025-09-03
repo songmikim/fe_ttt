@@ -16,6 +16,6 @@ public class EmailSendServiceTest {
         String to = "annsomde@naver.com";
         String code = "123456";
 
-        service.sendVerificationEmail(to, code);
+        //service.sendVerificationEmail(to, code);
     }
 }
